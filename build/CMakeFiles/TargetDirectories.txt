@@ -1,4 +1,0 @@
-/home/ubuntu/myhello/build/CMakeFiles/DDSHelloWorldPublisher.dir
-/home/ubuntu/myhello/build/CMakeFiles/DDSHelloWorldSubscriber.dir
-/home/ubuntu/myhello/build/CMakeFiles/edit_cache.dir
-/home/ubuntu/myhello/build/CMakeFiles/rebuild_cache.dir
