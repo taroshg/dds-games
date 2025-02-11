@@ -22,3 +22,4 @@ cd build
 .\DDSHelloWorldSubscriber
 ```
 
+Giancarlo Palumbo
