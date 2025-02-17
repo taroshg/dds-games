@@ -21,5 +21,3 @@ in another terminal
 cd build 
 .\DDSHelloWorldSubscriber
 ```
-
-Test
