@@ -10,6 +10,12 @@ cmake ..
 cmake --build .
 ```
 
+### Instructions to build src:
+create a idl file then run
+```
+~/FastDDS/src/fastddsgen/scripts/fastddsgen HelloWorld.idl
+```
+
 ### Instructions to run
 in one terminal
 ```
