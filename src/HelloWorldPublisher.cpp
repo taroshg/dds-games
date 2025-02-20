@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <thread>
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -46,6 +47,8 @@ private:
     DataWriter* writer_;
 
     TypeSupport type_;
+
+    std::string connectionTopic;
 
     class PubListener : public DataWriterListener
     {
@@ -132,7 +135,9 @@ public:
         type_.register_type(participant_);
 
         // Create the publications Topic
-        topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+        std::cout << "Type the topic you wish to publish to: ";
+        std::cin >> connectionTopic;
+        topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
         {
