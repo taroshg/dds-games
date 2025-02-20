@@ -9,7 +9,7 @@ build all the files
 cmake ..
 cmake --build .
 ```
-
+hello
 ### Instructions to run
 in one terminal
 ```
@@ -19,5 +19,5 @@ cd build
 in another terminal
 ```
 cd build 
-.\DDSHelloWorldSubscriber
+.\
 ```
