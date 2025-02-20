@@ -21,4 +21,4 @@ in another terminal
 cd build 
 .\DDSHelloWorldSubscriber
 ```
-Cheng (Hello)
+Hang Cheng (Hello)
