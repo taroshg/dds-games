@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <thread>
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -46,6 +47,8 @@ private:
     Topic* topic_;
 
     TypeSupport type_;
+
+    std::string connectionTopic;
 
     class SubListener : public DataReaderListener
     {
@@ -145,7 +148,9 @@ public:
         type_.register_type(participant_);
 
         // Create the subscriptions Topic
-        topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+        std::cout << "Type the topic you wish to subscribe to: ";
+        std::cin >> connectionTopic;
+        topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
         {
