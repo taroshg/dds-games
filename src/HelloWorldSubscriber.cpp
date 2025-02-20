@@ -148,7 +148,7 @@ public:
         type_.register_type(participant_);
 
         // Create the subscriptions Topic
-        std::cout << "Type the topic you wish to subscribe to: ";
+        std::cout << "Type the topic you wish to subscribe to: " << std::endl;
         std::cin >> connectionTopic;
         topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 

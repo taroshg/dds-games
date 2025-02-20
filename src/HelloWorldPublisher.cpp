@@ -135,7 +135,7 @@ public:
         type_.register_type(participant_);
 
         // Create the publications Topic
-        std::cout << "Type the topic you wish to publish to: ";
+        std::cout << "Type the topic you wish to publish to: " << std::endl;
         std::cin >> connectionTopic;
         topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 
