@@ -17,7 +17,7 @@ cd build
 .\DDSHelloWorldPublisher
 ```
 in another terminal
-```
+``Hang Again`
 cd build 
 .\DDSHelloWorldSubscriber
 ```
