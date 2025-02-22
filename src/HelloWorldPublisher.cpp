@@ -21,7 +21,7 @@
 
 #include <chrono>
 #include <thread>
-#include <string>
+#include <iostream>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -35,16 +35,15 @@ using namespace eprosima::fastdds::dds;
 class HelloWorldPublisher
 {
 private:
-
     HelloWorld hello_;
 
-    DomainParticipant* participant_;
+    DomainParticipant *participant_;
 
-    Publisher* publisher_;
+    Publisher *publisher_;
 
-    Topic* topic_;
+    Topic *topic_;
 
-    DataWriter* writer_;
+    DataWriter *writer_;
 
     TypeSupport type_;
 
@@ -53,7 +52,6 @@ private:
     class PubListener : public DataWriterListener
     {
     public:
-
         PubListener()
             : matched_(0)
         {
@@ -63,9 +61,7 @@ private:
         {
         }
 
-        void on_publication_matched(
-                DataWriter*,
-                const PublicationMatchedStatus& info) override
+        void on_publication_matched(DataWriter *, const PublicationMatchedStatus &info) override
         {
             if (info.current_count_change == 1)
             {
@@ -80,7 +76,7 @@ private:
             else
             {
                 std::cout << info.current_count_change
-                        << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
+                          << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
             }
         }
 
@@ -89,13 +85,8 @@ private:
     } listener_;
 
 public:
-
     HelloWorldPublisher()
-        : participant_(nullptr)
-        , publisher_(nullptr)
-        , topic_(nullptr)
-        , writer_(nullptr)
-        , type_(new HelloWorldPubSubType())
+        : participant_(nullptr), publisher_(nullptr), topic_(nullptr), writer_(nullptr), type_(new HelloWorldPubSubType())
     {
     }
 
@@ -116,7 +107,7 @@ public:
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 
-    //!Initialize the publisher
+    //! Initialize the publisher
     bool init()
     {
         hello_.index(0);
@@ -162,21 +153,27 @@ public:
         return true;
     }
 
-    //!Send a publication
+    //! Send a publication
     bool publish()
-    {
+    {   
+        std::string usr_msg;
+
         if (listener_.matched_ > 0)
         {
             hello_.index(hello_.index() + 1);
+
+            std::cout << "type message: ";
+            std::getline(std::cin, usr_msg);
+            hello_.message(usr_msg);
+
             writer_->write(&hello_);
             return true;
         }
         return false;
     }
 
-    //!Run the Publisher
-    void run(
-            uint32_t samples)
+    //! Run the Publisher
+    void run(uint32_t samples)
     {
         uint32_t samples_sent = 0;
         while (samples_sent < samples)
@@ -185,7 +182,7 @@ public:
             {
                 samples_sent++;
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                            << " SENT" << std::endl;
+                          << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
@@ -193,14 +190,14 @@ public:
 };
 
 int main(
-        int argc,
-        char** argv)
+    int argc,
+    char **argv)
 {
     std::cout << "Starting publisher." << std::endl;
     uint32_t samples = 10;
 
-    HelloWorldPublisher* mypub = new HelloWorldPublisher();
-    if(mypub->init())
+    HelloWorldPublisher *mypub = new HelloWorldPublisher();
+    if (mypub->init())
     {
         mypub->run(samples);
     }
