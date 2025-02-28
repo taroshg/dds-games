@@ -35,19 +35,15 @@ using namespace eprosima::fastdds::dds;
 class HelloWorldPublisher
 {
 private:
+
     HelloWorld hello_;
-
     DomainParticipant *participant_;
-
     Publisher *publisher_;
-
     Topic *topic_;
-
     DataWriter *writer_;
-
     TypeSupport type_;
-
-    std::string connectionTopic;
+    std::string connectionTopic = "main"; // force user to "main" topic
+    std::string username;
 
     class PubListener : public DataWriterListener
     {
@@ -125,9 +121,10 @@ public:
         // Register the Type
         type_.register_type(participant_);
 
+        std::cout << "create username: ";
+        getline(std::cin, username);
+
         // Create the publications Topic
-        std::cout << "Type the topic you wish to publish to: ";
-        std::cin >> connectionTopic;
         topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
@@ -162,9 +159,9 @@ public:
         {
             hello_.index(hello_.index() + 1);
 
-            std::cout << "type message: ";
             std::getline(std::cin, usr_msg);
-            hello_.message(usr_msg);
+            std::cout << "\033[1A"; // ANSI escape code to move cursor up one line
+            hello_.message(username + ": " + usr_msg);
 
             writer_->write(&hello_);
             return true;
@@ -181,27 +178,10 @@ public:
             if (publish())
             {
                 samples_sent++;
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
+                // std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                //           << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
 };
-
-int main(
-    int argc,
-    char **argv)
-{
-    std::cout << "Starting publisher." << std::endl;
-    uint32_t samples = 10;
-
-    HelloWorldPublisher *mypub = new HelloWorldPublisher();
-    if (mypub->init())
-    {
-        mypub->run(samples);
-    }
-
-    delete mypub;
-    return 0;
-}

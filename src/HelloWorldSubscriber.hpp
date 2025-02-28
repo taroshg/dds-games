@@ -48,7 +48,7 @@ private:
 
     TypeSupport type_;
 
-    std::string connectionTopic;
+    std::string connectionTopic = "main"; // force user to "main" topic
 
     class SubListener : public DataReaderListener
     {
@@ -91,8 +91,7 @@ private:
                 if (info.valid_data)
                 {
                     samples_++;
-                    std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                              << " RECEIVED." << std::endl;
+                    std::cout << hello_.message() << std::endl;
                 }
             }
         }
@@ -147,9 +146,6 @@ public:
         // Register the Type
         type_.register_type(participant_);
 
-        // Create the subscriptions Topic
-        std::cout << "Type the topic you wish to subscribe to: ";
-        std::cin >> connectionTopic;
         topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
@@ -177,8 +173,7 @@ public:
     }
 
     //!Run the Subscriber
-    void run(
-            uint32_t samples)
+    void run(uint32_t samples)
     {
         while (listener_.samples_ < samples)
         {
@@ -187,20 +182,3 @@ public:
     }
 
 };
-
-int main(
-        int argc,
-        char** argv)
-{
-    std::cout << "Starting subscriber." << std::endl;
-    uint32_t samples = 10;
-
-    HelloWorldSubscriber* mysub = new HelloWorldSubscriber();
-    if (mysub->init())
-    {
-        mysub->run(samples);
-    }
-
-    delete mysub;
-    return 0;
-}
