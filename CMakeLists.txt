@@ -31,3 +31,6 @@ target_link_libraries(DDSHelloWorldPublisher fastdds fastcdr)
 
 add_executable(DDSHelloWorldSubscriber src/HelloWorldSubscriber.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
 target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
+
+add_executable(TicTacToe src/TicTacToe.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
+target_link_libraries(TicTacToe fastdds fastcdr)
