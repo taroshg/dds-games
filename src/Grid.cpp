@@ -42,8 +42,8 @@ void Grid::updateGridSymbols()
  */
 bool Grid::addToGrid(int pos, bool isO)
 {
-pos--; // This is the only method that directly interacts with user input so we decrement the input position since it is one ahead of how the actual grid string is indexed
-bool canBePlaced = verifyGridPosEmpty(pos);
+    pos--; // This is the only method that directly interacts with user input so we decrement the input position since it is one ahead of how the actual grid string is indexed
+    bool canBePlaced = verifyGridPosEmpty(pos);
     if(canBePlaced) {
         if(isO) {
             gridstate += powers(3, pos); // To add ternaries of just 1 it's just adding an exponetial of three in the corresponding postion
@@ -86,7 +86,7 @@ std::string Grid::getExampleGrid()
 bool Grid::verifyGridPosEmpty(int pos)
 { 
 bool outcome = false;
-    if(getGridSymbol(pos) == " ") {
+    if(pos >= 0 && pos < 9 && getGridSymbol(pos) == " ") { // Check if pos is a valid index and then check if associated string position is empty
         outcome = true;
     }
     return outcome;
