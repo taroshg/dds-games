@@ -26,11 +26,11 @@ endif()
 message(STATUS "Configuring HelloWorld publisher/subscriber example...")
 file(GLOB DDS_HELLOWORLD_SOURCES_CXX "src/*.cxx")
 
-add_executable(DDSHelloWorldPublisher src/HelloWorldPublisher.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-target_link_libraries(DDSHelloWorldPublisher fastdds fastcdr)
+#add_executable(DDSHelloWorldPublisher src/HelloWorldPublisher.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
+#target_link_libraries(DDSHelloWorldPublisher fastdds fastcdr)
 
-add_executable(DDSHelloWorldSubscriber src/HelloWorldSubscriber.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
+#add_executable(DDSHelloWorldSubscriber src/HelloWorldSubscriber.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
+#target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
 
-add_executable(TicTacToe src/TicTacToe.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
+add_executable(TicTacToe src/TicTacToe.cpp src/Player.cpp src/Grid.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
 target_link_libraries(TicTacToe fastdds fastcdr)
