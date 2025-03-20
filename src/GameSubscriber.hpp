@@ -1,27 +1,7 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/**
- * @file HelloWorldSubscriber.cpp
- *
- */
-
-#include "HelloWorldPubSubTypes.hpp"
+#include "GamePubSubTypes.hpp"
 
 #include <chrono>
 #include <thread>
-#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -34,28 +14,24 @@
 
 using namespace eprosima::fastdds::dds;
 
-class HelloWorldSubscriber
+class GameSubscriber
 {
 private:
 
     DomainParticipant* participant_;
-
     Subscriber* subscriber_;
-
     DataReader* reader_;
-
     Topic* topic_;
-
     TypeSupport type_;
-
-    std::string connectionTopic = "main"; // force user to "main" topic
 
     class SubListener : public DataReaderListener
     {
     public:
 
-        SubListener()
-            : samples_(0)
+        Game game_;
+        std::atomic_int samples_;
+
+        SubListener(): samples_(0)
         {
         }
 
@@ -82,39 +58,35 @@ private:
             }
         }
 
-        void on_data_available(
-                DataReader* reader) override
-        {
-            SampleInfo info;
-            if (reader->take_next_sample(&hello_, &info) == eprosima::fastdds::dds::RETCODE_OK)
-            {
-                if (info.valid_data)
-                {
-                    samples_++;
-                    std::cout << hello_.message() << std::endl;
-                }
-            }
-        }
-
-        HelloWorld hello_;
-
-        std::atomic_int samples_;
+        // void on_data_available(DataReader* reader) override
+        // {
+        //     SampleInfo info;
+        //     if (reader->take_next_sample(&game_, &info) == eprosima::fastdds::dds::RETCODE_OK)
+        //     {
+        //         if (info.valid_data)
+        //         {
+        //             samples_++;
+        //             std::cout << "Message: " << game_.message() << " with uid: " << game_.uid()
+        //                       << " RECEIVED." << std::endl;
+        //         }
+        //     }
+        // }
 
     }
     listener_;
 
 public:
 
-    HelloWorldSubscriber()
+    GameSubscriber()
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(new HelloWorldPubSubType())
+        , type_(new GamePubSubType())
     {
     }
 
-    virtual ~HelloWorldSubscriber()
+    virtual ~GameSubscriber()
     {
         if (reader_ != nullptr)
         {
@@ -146,7 +118,8 @@ public:
         // Register the Type
         type_.register_type(participant_);
 
-        topic_ = participant_->create_topic(connectionTopic, "HelloWorld", TOPIC_QOS_DEFAULT);
+        // Create the subscriptions Topic
+        topic_ = participant_->create_topic("GameTopic", "Game", TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
         {
@@ -172,13 +145,13 @@ public:
         return true;
     }
 
-    //!Run the Subscriber
-    void run(uint32_t samples)
-    {
-        while (listener_.samples_ < samples)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    bool get(Game* game){
+        SampleInfo info;
+        if(reader_->take_next_sample(game, &info) == eprosima::fastdds::dds::RETCODE_OK){
+            if (info.valid_data){
+                return true;
+            }
         }
+        return false;
     }
-
 };

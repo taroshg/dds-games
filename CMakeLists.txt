@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(DDSHelloWorld)
+project(DDSGame)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -23,14 +23,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-message(STATUS "Configuring HelloWorld publisher/subscriber example...")
-file(GLOB DDS_HELLOWORLD_SOURCES_CXX "src/*.cxx")
+message(STATUS "Configuring Game publisher/subscriber example...")
+file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 
-# add_executable(DDSHelloWorldPublisher src/HelloWorldPublisher.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-# target_link_libraries(DDSHelloWorldPublisher fastdds fastcdr)
+# add_executable(DDSGamePublisher src/GamePublisher.cpp ${DDS_GAME_SOURCES_CXX})
+# target_link_libraries(DDSGamePublisher fastdds fastcdr)
 
-# add_executable(DDSHelloWorldSubscriber src/HelloWorldSubscriber.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-# target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
+# add_executable(DDSGameSubscriber src/GameSubscriber.cpp ${DDS_GAME_SOURCES_CXX})
+# target_link_libraries(DDSGameSubscriber fastdds fastcdr)
 
-add_executable(DDSHelloWorldUser src/HelloWorldUser.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-target_link_libraries(DDSHelloWorldUser fastdds fastcdr)
+add_executable(DDSGameUser src/GameUser.cpp ${DDS_GAME_SOURCES_CXX})
+target_link_libraries(DDSGameUser fastdds fastcdr)
