@@ -6,31 +6,45 @@
 #include <random>
 #include <sstream>
 
-void send(GamePublisher* pub, std::string uid){
-    Game game;
+bool send(GamePublisher* pub, Game* game, std::string uid){
+    game->uid(uid);
 
-    while(game.message() != "quit!"){
-        game.uid(uid);
-
-        std::string msg;
-        
-        std::cin >> msg;
-        std::cout << "\033[A\33[2K\r";
-        
-        game.message(msg);
-        if(!pub->publish(&game)){
-            std::cout << "missed send!";
-        }
+    std::string msg;
+    
+    std::getline(std::cin, msg);
+    std::cout << "\033[A\33[2K\r";
+    
+    game->message(msg);
+    if(pub->publish(game)){
+        return true;
     }
-
+    std::cout << "missed send!";
+    return false;
 }
 
-void get(GameSubscriber* sub, std::string uid){
-    Game game;
-    while(game.message() != "quit!"){
-        if(sub->get(&game) && game.uid() != uid){
-            std::cout << "msg from " << game.uid() << ": " << game.message() << "\n";
+bool get(GameSubscriber* sub, Game* game, std::string uid){
+    if(sub->get(game) && game->uid() != uid){
+        std::cout << "msg from " << game->uid() << ": " << game->message() << "\n";
+        return true;
+    }
+    return false;
+}
+
+std::atomic<bool> running(true);
+
+void send_worker(GamePublisher* pub, Game* game, std::string uid){
+    while (running){
+        if (game->message() == "quit!"){
+            running = false;
+            break;
         }
+        send(pub, game, uid);
+    }
+}
+
+void get_worker(GameSubscriber* sub, Game* game, std::string uid){
+    while (running){
+        get(sub, game, uid);
     }
 }
 
@@ -39,11 +53,10 @@ std::string generateUUID() {
     std::mt19937_64 gen(rd());
     std::uniform_int_distribution<uint64_t> dis;
 
-    uint64_t part1 = dis(gen);
-    uint64_t part2 = dis(gen);
+    uint64_t uuid = dis(gen);
 
     std::stringstream ss;
-    ss << std::hex << part1 << "-" << part2;
+    ss << std::hex << uuid;
     return ss.str();
 }
 
@@ -56,9 +69,17 @@ int main(){
 
     std::cout << "created a user with " << uid;
 
+    Game myGame;
+    Game oppGame;
+
+    bool sent = false;
+    bool received = false;
+
+    bool run = true;
     if (pub.init() && sub.init()){
-        std::thread pub_td(send, &pub, uid);
-        std::thread sub_td(get, &sub, uid);
+    
+        std::thread pub_td(send_worker, &pub, &myGame, uid);
+        std::thread sub_td(get_worker, &sub, &oppGame, uid);
 
         pub_td.join();
         sub_td.join();

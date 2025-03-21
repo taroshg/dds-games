@@ -1,3 +1,11 @@
+# Fast DDS Games
+
+### Latest update
+- we have a fully working chat room via CLI.
+- Game.idl is defined
+- we have a game loop working (waiting to implement RPS)
+
+
 ### Instructions to build:
 make build folder and cd into it
  ```
@@ -26,4 +34,10 @@ in another terminal
 ```
 cd build 
 .\DDSHelloWorldSubscriber
+```
+
+### Mac OS build cmd
+```
+cmake .. -DCMAKE_INSTALL_PREFIX=~/Fast-DDS/install -DBUILD_SHARED_LIBS=ON
+cmake --build .
 ```
