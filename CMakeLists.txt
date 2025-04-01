@@ -39,6 +39,6 @@ file(GLOB DDS_HELLOWORLD_SOURCES_CXX "src/*.cxx")
 #target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
 
 add_executable(TicTacToe src/TicTacToe.cpp src/Player.cpp src/Grid.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-add_executable(TestGui src/TestGui.cpp src/Grid.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
-target_link_libraries(TestGui PRIVATE fastdds fastcdr ${wxWidgets_LIBRARIES})
+add_executable(TicTacToeGui src/TicTacToeGui.cpp src/Player.cpp src/Grid.cpp ${DDS_HELLOWORLD_SOURCES_CXX})
+target_link_libraries(TicTacToeGui PRIVATE fastdds fastcdr ${wxWidgets_LIBRARIES})
 target_link_libraries(TicTacToe PRIVATE fastdds fastcdr ${wxWidgets_LIBRARIES})
