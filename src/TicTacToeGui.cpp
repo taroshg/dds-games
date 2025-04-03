@@ -63,6 +63,7 @@ private:
     wxBitmap oButtonImage;
     wxBitmap blankButtonImage;
     wxSize buttonTileSize;
+    int turnCounter;
 };
 
 bool MyApp::OnInit()
@@ -107,7 +108,7 @@ MyFrame::MyFrame()
     panel->SetSizer(mainSizer);
 
     CreateStatusBar();
-    SetStatusText("It is currently Player " + currentPlayer.getName() + "'s turn. Symbol: (" + currentPlayer.getSymbol() + ")");
+    SetStatusText("It is currently Player " + currentPlayer.getName() + "'s turn. Symbol: (" + currentPlayer.getSymbol() + ") Turn: " + std::to_string(turnCounter));
 
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 }
@@ -148,6 +149,7 @@ void MyFrame::setupGame(std::string username1, std::string username2)
     p1.setName(username1);
     p2.setName(username2);
     currentPlayer = p1;
+    turnCounter = 1;
 }
 
 
@@ -167,22 +169,30 @@ void MyFrame::OnButtonClick(wxCommandEvent& event)
         setupGame(p1.getName(), p2.getName());
         updateGraphicalGameGrid();
     }
+    else if (turnCounter == 9) // Check if board is full with no winning patern and reset if so
+    {
+        wxMessageBox("Board filled with no winning patern nobody wins :(");
+        setupGame(p1.getName(), p2.getName());
+        updateGraphicalGameGrid();
+    }
     else // Run turn advancement stuff if game hasn't been won yet
     {
         if(validMove & currentPlayer.getSymbol() == p1.getSymbol()) // Use validMove to see if the turn should be advanced
         {
             currentPlayer = p2;
+            turnCounter++;
         }
         else if(validMove) // Advance turn but this turn had p2 making the move
         {
             currentPlayer = p1;
+            turnCounter++;
         }
         else // Invalid choice made prompt user to make another choice
         {
             wxMessageBox("Please choose an empty slot on the board");
         }
     }
-    SetStatusText("It is currently Player " + currentPlayer.getName() + "'s turn. Symbol: (" + currentPlayer.getSymbol() + ")");
+    SetStatusText("It is currently Player " + currentPlayer.getName() + "'s turn. Symbol: (" + currentPlayer.getSymbol() + ") Turn: " + std::to_string(turnCounter));
 }
 
 
