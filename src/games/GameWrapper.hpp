@@ -9,6 +9,8 @@ protected:
     int opp_wins_;
     int my_moves_;
     int opp_moves_;
+
+    bool first_;
 public:
     GameWrapper() : 
     my_wins_(0),
@@ -31,6 +33,10 @@ public:
     bool is_full_turn() const {
         if (my_moves_ == 0 || opp_moves_ == 0) return false;
         return my_moves_ == opp_moves_;
+    }
+
+    void is_first_to_play(){
+        first_ = true;
     }
 };
 

@@ -59,6 +59,7 @@ public:
             last_message_count_ = my_controller_.message_count();
 
             if (turn_){
+                game_api_->is_first_to_play();
                 std::cout << "you go first!" << std::endl;
             }
 
