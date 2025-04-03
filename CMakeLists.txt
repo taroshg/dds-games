@@ -26,11 +26,5 @@ endif()
 message(STATUS "Configuring Game publisher/subscriber example...")
 file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 
-# add_executable(DDSGamePublisher src/GamePublisher.cpp ${DDS_GAME_SOURCES_CXX})
-# target_link_libraries(DDSGamePublisher fastdds fastcdr)
-
-# add_executable(DDSGameSubscriber src/GameSubscriber.cpp ${DDS_GAME_SOURCES_CXX})
-# target_link_libraries(DDSGameSubscriber fastdds fastcdr)
-
-add_executable(DDSGameUser src/GameUser.cpp ${DDS_GAME_SOURCES_CXX})
-target_link_libraries(DDSGameUser fastdds fastcdr)
+add_executable(TicTacToe-Multiplayer src/GameUser.cpp src/Grid.cpp ${DDS_GAME_SOURCES_CXX})
+target_link_libraries(TicTacToe-Multiplayer fastdds fastcdr)
