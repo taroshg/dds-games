@@ -1,3 +1,6 @@
+#ifndef DDS_GAME_CONTROLLER_HEADER
+#define DDS_GAME_CONTROLLER_HEADER
+
 #include "GameMessagePubSubTypes.hpp"
 
 #include <chrono>
@@ -228,3 +231,5 @@ public:
         return sub_listener_.game_msg();
     }
 };
+
+#endif
