@@ -64,6 +64,7 @@ private:
     int matched_;
     unsigned long message_count_;
     std::string last_uid_;
+    std::string uid_;
     GameMessage game_msg_;
 public:
     // we are sticking to 2 player games!
@@ -75,6 +76,10 @@ public:
     message_count_(0), 
     participants_({}){}
     ~SubListener() override {}
+
+    void set_uid(std::string uid){
+        uid_ = uid;
+    }
 
     void on_subscription_matched(
             DataReader*,
@@ -100,11 +105,20 @@ public:
     void on_data_available(DataReader* reader) override
     {
         SampleInfo info;
-        if (reader->take_next_sample(&game_msg_, &info) == eprosima::fastdds::dds::RETCODE_OK && info.valid_data)
+        GameMessage msg;
+        if (reader->take_next_sample(&msg, &info) == eprosima::fastdds::dds::RETCODE_OK && info.valid_data)
         {
             // adds the participant uid to a list
-            last_uid_ = game_msg_.uid();
-            participants_.insert(participants_.begin() + message_count_, game_msg_.uid());
+            last_uid_ = msg.uid();
+
+            // checks duplicates
+            if (std::find(participants_.begin(), participants_.end(), last_uid_) == participants_.end())
+                participants_.push_back(last_uid_);
+
+            if (last_uid_ == uid_)
+                return;
+            
+            game_msg_ = msg;
             message_count_++;
         }
     }
@@ -113,7 +127,7 @@ public:
     unsigned long message_count() const {return message_count_;}
     std::vector<std::string>& participants() {return participants_;}
     std::string last_uid() const {return last_uid_;}
-    GameMessage* game_msg() {return &game_msg_;}
+    GameMessage& game_msg() {return game_msg_;}
 };
 
 class DDSGameController{
@@ -151,7 +165,10 @@ public:
     , writer_(nullptr)
     , reader_(nullptr)
     , last_message_count_(0)
-    , type_(new GameMessagePubSubType()) {}
+    , type_(new GameMessagePubSubType()) {
+        uid_ = generateUUID();
+        sub_listener_.set_uid(uid_);
+    }
 
     virtual ~DDSGameController()
     {
@@ -195,16 +212,16 @@ public:
         reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &sub_listener_);
         if (reader_ == nullptr) return false;
 
-        uid_ = generateUUID();
-
         return true;
     }
 
     std::string uid() const {return uid_;}
 
-    bool publish(GameMessage* game){
+    bool publish(GameMessage* msg){
+        // only publish if there is a listener
         if (pub_listener_.matched() > 0){
-            writer_->write(game);
+            msg->index(message_count() + 1);
+            writer_->write(msg);
             return true;
         }
         return false;
@@ -227,8 +244,7 @@ public:
     std::vector<std::string>& participants() {return sub_listener_.participants();}
 
     GameMessage* read() {
-        // read when there is a new message to be read
-        return sub_listener_.game_msg();
+        return &sub_listener_.game_msg();
     }
 };
 

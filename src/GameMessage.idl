@@ -1,15 +1,16 @@
 struct GameMessage {
-    long game_id; // 0: rps, 1: ttt, ...
+    unsigned long index;
+    uint8 game_id; // 0: rps, 1: ttt, ...
 
     string uid; // user id
     string oid; // opp id
 
-    long ngames; // number of games played
-    long wins; // wins
+    unsigned long ngames; // number of games played
+    unsigned long wins; // wins
 
-    long rps; // rock paper scissors game state
-    long ttt; // tic-tac-toe game state
-    long c4; // connect 4 game state
+    unsigned long rps; // rock paper scissors game state
+    unsigned long ttt; // tic-tac-toe game state
+    unsigned long c4; // connect 4 game state
 
     string message;
 };

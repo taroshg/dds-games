@@ -4,7 +4,7 @@
 class RPS : public GameWrapper {
 public:
     RPS(): GameWrapper() {};
-    void get_user_move(GameMessage* game_msg) override {
+    void get_user_move(GameMessage* game_msg, GameMessage* opp_game_msg) override {
         char move;
         do {
             std::cout << "'r' for rock\n";
@@ -42,7 +42,7 @@ public:
         return 0;
     }
 
-    bool is_end() override{
+    bool is_end(GameMessage* game_msg, GameMessage* opp_game_msg) override{
         return is_full_turn();
     }
 };

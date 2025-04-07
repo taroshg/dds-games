@@ -17,9 +17,9 @@ public:
     opp_wins_(0) {}
 
     // update game_msg with state after your move
-    virtual void get_user_move(GameMessage* game_msg) = 0;
+    virtual void get_user_move(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
     virtual int get_winner(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
-    virtual bool is_end() = 0;
+    virtual bool is_end(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
 
     int get_my_wins() const {return my_wins_;}
     int get_opp_wins() const {return opp_wins_;}
@@ -37,6 +37,17 @@ public:
 
     void is_first_to_play(){
         first_ = true;
+    }
+
+    void reset(GameMessage* game_msg){
+        game_msg->ttt(0);
+        game_msg->rps(0);
+        game_msg->c4(0);
+
+        my_moves_ = 0;
+        opp_moves_ = 0;
+        my_wins_ = 0;
+        opp_wins_ = 0;
     }
 };
 

@@ -34,13 +34,12 @@ public:
             game_msg.uid(uid_);
             game_msg.message("connected!");
             if (!my_controller_.publish(&game_msg)) return false;
-    
+            
             // wait until there are more than 1 broadcast, until another player joins
-            while(my_controller_.message_count() < 2){
+            while(my_controller_.participants().size() < 2){
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
             
-
             // participants are going to be in the order of first joined
             int i = 0;
             for (std::string id : my_controller_.participants()){
@@ -87,13 +86,10 @@ public:
                 turn_ = true;
                 game_api_->opp_moved();
 
-                // rps specific!!
-                if (game_api_->is_end()){
-                    round++;
+                if (game_api_->is_end(my_game_msg, opp_game_msg)){
                     std::cout << "-------- round " << round << " -------" << std::endl;
+                    round++;
                     // print moves
-                    std::cout << "my (" << my_game_msg->uid() << ") move: " << my_game_msg->rps() << std::endl;
-                    std::cout << "opp (" << opp_game_msg->uid() << ") move: " << opp_game_msg->rps() << std::endl;
                     int score = game_api_->get_winner(my_game_msg, opp_game_msg);
                     if(score > 0) std::cout << "--- you won! ---" << std::endl;
                     else if(score < 0) std::cout << "--- you lose :( ---" << std::endl;
@@ -104,18 +100,12 @@ public:
             if (turn_){
                 my_game_msg->uid(uid_);
 
-                game_api_->get_user_move(my_game_msg);
+                game_api_->get_user_move(my_game_msg, opp_game_msg);
                 game_api_->I_moved();
 
-                // rps specific!!
-                if (my_controller_.last_uid() == oid_ && game_api_->is_end()){
+                if (my_controller_.last_uid() == oid_ && game_api_->is_end(my_game_msg, opp_game_msg)){
                     std::cout << "-------- round " << round << " -------" << std::endl;
-                    // print moves
-                    std::cout << "my (" << my_game_msg->uid() << ") move: " << my_game_msg->rps() << std::endl;
-                    std::cout << "opp (" << opp_game_msg->uid() << ") move: " << opp_game_msg->rps() << std::endl;
-
                     round++;
-
                     int score = game_api_->get_winner(my_game_msg, opp_game_msg);
                     if(score > 0) std::cout << "--- you won! ---" << std::endl;
                     else if(score < 0) std::cout << "--- you lose :( ---" << std::endl;
@@ -130,10 +120,3 @@ public:
         }
     }
 };
-int main(){
-    GameWrapper* rps = new RPS();
-    GameUser* user = new GameUser(rps);
-    if(user->init()){
-        user->play(3);
-    }
-}

@@ -59,11 +59,41 @@ void register_GameMessage_type_identifier(
         header_GameMessage = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_GameMessage);
         CompleteStructMemberSeq member_seq_GameMessage;
         {
+            TypeIdentifierPair type_ids_index;
+            ReturnCode_t return_code_index {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_index =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_uint32_t", type_ids_index);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_index)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_index = 0x00000000;
+            bool common_index_ec {false};
+            CommonStructMember common_index {TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_index, common_index_ec))};
+            if (!common_index_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure index member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_index = "index";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
+            ann_custom_GameMessage.reset();
+            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_GameMessage);
+            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
+            TypeObjectUtils::add_complete_struct_member(member_seq_GameMessage, member_index);
+        }
+        {
             TypeIdentifierPair type_ids_game_id;
             ReturnCode_t return_code_game_id {eprosima::fastdds::dds::RETCODE_OK};
             return_code_game_id =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_game_id);
+                "_uint8_t", type_ids_game_id);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_game_id)
             {
@@ -73,7 +103,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_game_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_game_id = 0x00000000;
+            MemberId member_id_game_id = 0x00000001;
             bool common_game_id_ec {false};
             CommonStructMember common_game_id {TypeObjectUtils::build_common_struct_member(member_id_game_id, member_flags_game_id, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_game_id, common_game_id_ec))};
             if (!common_game_id_ec)
@@ -111,7 +141,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_uid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_uid = 0x00000001;
+            MemberId member_id_uid = 0x00000002;
             bool common_uid_ec {false};
             CommonStructMember common_uid {TypeObjectUtils::build_common_struct_member(member_id_uid, member_flags_uid, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_uid, common_uid_ec))};
             if (!common_uid_ec)
@@ -149,7 +179,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_oid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_oid = 0x00000002;
+            MemberId member_id_oid = 0x00000003;
             bool common_oid_ec {false};
             CommonStructMember common_oid {TypeObjectUtils::build_common_struct_member(member_id_oid, member_flags_oid, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_oid, common_oid_ec))};
             if (!common_oid_ec)
@@ -169,7 +199,7 @@ void register_GameMessage_type_identifier(
             ReturnCode_t return_code_ngames {eprosima::fastdds::dds::RETCODE_OK};
             return_code_ngames =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_ngames);
+                "_uint32_t", type_ids_ngames);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_ngames)
             {
@@ -179,7 +209,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_ngames = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_ngames = 0x00000003;
+            MemberId member_id_ngames = 0x00000004;
             bool common_ngames_ec {false};
             CommonStructMember common_ngames {TypeObjectUtils::build_common_struct_member(member_id_ngames, member_flags_ngames, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ngames, common_ngames_ec))};
             if (!common_ngames_ec)
@@ -199,7 +229,7 @@ void register_GameMessage_type_identifier(
             ReturnCode_t return_code_wins {eprosima::fastdds::dds::RETCODE_OK};
             return_code_wins =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_wins);
+                "_uint32_t", type_ids_wins);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_wins)
             {
@@ -209,7 +239,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_wins = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_wins = 0x00000004;
+            MemberId member_id_wins = 0x00000005;
             bool common_wins_ec {false};
             CommonStructMember common_wins {TypeObjectUtils::build_common_struct_member(member_id_wins, member_flags_wins, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_wins, common_wins_ec))};
             if (!common_wins_ec)
@@ -229,7 +259,7 @@ void register_GameMessage_type_identifier(
             ReturnCode_t return_code_rps {eprosima::fastdds::dds::RETCODE_OK};
             return_code_rps =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_rps);
+                "_uint32_t", type_ids_rps);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_rps)
             {
@@ -239,7 +269,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_rps = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_rps = 0x00000005;
+            MemberId member_id_rps = 0x00000006;
             bool common_rps_ec {false};
             CommonStructMember common_rps {TypeObjectUtils::build_common_struct_member(member_id_rps, member_flags_rps, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_rps, common_rps_ec))};
             if (!common_rps_ec)
@@ -259,7 +289,7 @@ void register_GameMessage_type_identifier(
             ReturnCode_t return_code_ttt {eprosima::fastdds::dds::RETCODE_OK};
             return_code_ttt =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_ttt);
+                "_uint32_t", type_ids_ttt);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_ttt)
             {
@@ -269,7 +299,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_ttt = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_ttt = 0x00000006;
+            MemberId member_id_ttt = 0x00000007;
             bool common_ttt_ec {false};
             CommonStructMember common_ttt {TypeObjectUtils::build_common_struct_member(member_id_ttt, member_flags_ttt, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ttt, common_ttt_ec))};
             if (!common_ttt_ec)
@@ -289,7 +319,7 @@ void register_GameMessage_type_identifier(
             ReturnCode_t return_code_c4 {eprosima::fastdds::dds::RETCODE_OK};
             return_code_c4 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_c4);
+                "_uint32_t", type_ids_c4);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_c4)
             {
@@ -299,7 +329,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_c4 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_c4 = 0x00000007;
+            MemberId member_id_c4 = 0x00000008;
             bool common_c4_ec {false};
             CommonStructMember common_c4 {TypeObjectUtils::build_common_struct_member(member_id_c4, member_flags_c4, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_c4, common_c4_ec))};
             if (!common_c4_ec)
@@ -337,7 +367,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_message = 0x00000008;
+            MemberId member_id_message = 0x00000009;
             bool common_message_ec {false};
             CommonStructMember common_message {TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_message, common_message_ec))};
             if (!common_message_ec)

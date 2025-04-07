@@ -80,6 +80,8 @@ public:
     eProsima_user_DllExport GameMessage(
             const GameMessage& x)
     {
+                    m_index = x.m_index;
+
                     m_game_id = x.m_game_id;
 
                     m_uid = x.m_uid;
@@ -107,6 +109,7 @@ public:
     eProsima_user_DllExport GameMessage(
             GameMessage&& x) noexcept
     {
+        m_index = x.m_index;
         m_game_id = x.m_game_id;
         m_uid = std::move(x.m_uid);
         m_oid = std::move(x.m_oid);
@@ -125,6 +128,8 @@ public:
     eProsima_user_DllExport GameMessage& operator =(
             const GameMessage& x)
     {
+
+                    m_index = x.m_index;
 
                     m_game_id = x.m_game_id;
 
@@ -155,6 +160,7 @@ public:
             GameMessage&& x) noexcept
     {
 
+        m_index = x.m_index;
         m_game_id = x.m_game_id;
         m_uid = std::move(x.m_uid);
         m_oid = std::move(x.m_oid);
@@ -174,7 +180,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const GameMessage& x) const
     {
-        return (m_game_id == x.m_game_id &&
+        return (m_index == x.m_index &&
+           m_game_id == x.m_game_id &&
            m_uid == x.m_uid &&
            m_oid == x.m_oid &&
            m_ngames == x.m_ngames &&
@@ -196,11 +203,40 @@ public:
     }
 
     /*!
+     * @brief This function sets a value in member index
+     * @param _index New value for member index
+     */
+    eProsima_user_DllExport void index(
+            uint32_t _index)
+    {
+        m_index = _index;
+    }
+
+    /*!
+     * @brief This function returns the value of member index
+     * @return Value of member index
+     */
+    eProsima_user_DllExport uint32_t index() const
+    {
+        return m_index;
+    }
+
+    /*!
+     * @brief This function returns a reference to member index
+     * @return Reference to member index
+     */
+    eProsima_user_DllExport uint32_t& index()
+    {
+        return m_index;
+    }
+
+
+    /*!
      * @brief This function sets a value in member game_id
      * @param _game_id New value for member game_id
      */
     eProsima_user_DllExport void game_id(
-            int32_t _game_id)
+            uint8_t _game_id)
     {
         m_game_id = _game_id;
     }
@@ -209,7 +245,7 @@ public:
      * @brief This function returns the value of member game_id
      * @return Value of member game_id
      */
-    eProsima_user_DllExport int32_t game_id() const
+    eProsima_user_DllExport uint8_t game_id() const
     {
         return m_game_id;
     }
@@ -218,7 +254,7 @@ public:
      * @brief This function returns a reference to member game_id
      * @return Reference to member game_id
      */
-    eProsima_user_DllExport int32_t& game_id()
+    eProsima_user_DllExport uint8_t& game_id()
     {
         return m_game_id;
     }
@@ -307,7 +343,7 @@ public:
      * @param _ngames New value for member ngames
      */
     eProsima_user_DllExport void ngames(
-            int32_t _ngames)
+            uint32_t _ngames)
     {
         m_ngames = _ngames;
     }
@@ -316,7 +352,7 @@ public:
      * @brief This function returns the value of member ngames
      * @return Value of member ngames
      */
-    eProsima_user_DllExport int32_t ngames() const
+    eProsima_user_DllExport uint32_t ngames() const
     {
         return m_ngames;
     }
@@ -325,7 +361,7 @@ public:
      * @brief This function returns a reference to member ngames
      * @return Reference to member ngames
      */
-    eProsima_user_DllExport int32_t& ngames()
+    eProsima_user_DllExport uint32_t& ngames()
     {
         return m_ngames;
     }
@@ -336,7 +372,7 @@ public:
      * @param _wins New value for member wins
      */
     eProsima_user_DllExport void wins(
-            int32_t _wins)
+            uint32_t _wins)
     {
         m_wins = _wins;
     }
@@ -345,7 +381,7 @@ public:
      * @brief This function returns the value of member wins
      * @return Value of member wins
      */
-    eProsima_user_DllExport int32_t wins() const
+    eProsima_user_DllExport uint32_t wins() const
     {
         return m_wins;
     }
@@ -354,7 +390,7 @@ public:
      * @brief This function returns a reference to member wins
      * @return Reference to member wins
      */
-    eProsima_user_DllExport int32_t& wins()
+    eProsima_user_DllExport uint32_t& wins()
     {
         return m_wins;
     }
@@ -365,7 +401,7 @@ public:
      * @param _rps New value for member rps
      */
     eProsima_user_DllExport void rps(
-            int32_t _rps)
+            uint32_t _rps)
     {
         m_rps = _rps;
     }
@@ -374,7 +410,7 @@ public:
      * @brief This function returns the value of member rps
      * @return Value of member rps
      */
-    eProsima_user_DllExport int32_t rps() const
+    eProsima_user_DllExport uint32_t rps() const
     {
         return m_rps;
     }
@@ -383,7 +419,7 @@ public:
      * @brief This function returns a reference to member rps
      * @return Reference to member rps
      */
-    eProsima_user_DllExport int32_t& rps()
+    eProsima_user_DllExport uint32_t& rps()
     {
         return m_rps;
     }
@@ -394,7 +430,7 @@ public:
      * @param _ttt New value for member ttt
      */
     eProsima_user_DllExport void ttt(
-            int32_t _ttt)
+            uint32_t _ttt)
     {
         m_ttt = _ttt;
     }
@@ -403,7 +439,7 @@ public:
      * @brief This function returns the value of member ttt
      * @return Value of member ttt
      */
-    eProsima_user_DllExport int32_t ttt() const
+    eProsima_user_DllExport uint32_t ttt() const
     {
         return m_ttt;
     }
@@ -412,7 +448,7 @@ public:
      * @brief This function returns a reference to member ttt
      * @return Reference to member ttt
      */
-    eProsima_user_DllExport int32_t& ttt()
+    eProsima_user_DllExport uint32_t& ttt()
     {
         return m_ttt;
     }
@@ -423,7 +459,7 @@ public:
      * @param _c4 New value for member c4
      */
     eProsima_user_DllExport void c4(
-            int32_t _c4)
+            uint32_t _c4)
     {
         m_c4 = _c4;
     }
@@ -432,7 +468,7 @@ public:
      * @brief This function returns the value of member c4
      * @return Value of member c4
      */
-    eProsima_user_DllExport int32_t c4() const
+    eProsima_user_DllExport uint32_t c4() const
     {
         return m_c4;
     }
@@ -441,7 +477,7 @@ public:
      * @brief This function returns a reference to member c4
      * @return Reference to member c4
      */
-    eProsima_user_DllExport int32_t& c4()
+    eProsima_user_DllExport uint32_t& c4()
     {
         return m_c4;
     }
@@ -489,14 +525,15 @@ public:
 
 private:
 
-    int32_t m_game_id{0};
+    uint32_t m_index{0};
+    uint8_t m_game_id{0};
     std::string m_uid;
     std::string m_oid;
-    int32_t m_ngames{0};
-    int32_t m_wins{0};
-    int32_t m_rps{0};
-    int32_t m_ttt{0};
-    int32_t m_c4{0};
+    uint32_t m_ngames{0};
+    uint32_t m_wins{0};
+    uint32_t m_rps{0};
+    uint32_t m_ttt{0};
+    uint32_t m_c4{0};
     std::string m_message;
 
 };
