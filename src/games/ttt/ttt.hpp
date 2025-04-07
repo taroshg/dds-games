@@ -41,17 +41,17 @@ public:
 
         // get user move here
         bool valid = false;
-        while(!valid){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+        while(!valid){            
             std::cout << "give an input 0-8, 0 being top left and 8 being bottom right: ";
-            if (std::cin >> move){
-                // makes a occupied board by combining x's and o's
-                // inverts 0's to 1's, where 1's rep. empty square
-                // checks if intented pos to mark is an empty square
-                valid = ~(my_ttt | opp_ttt) & (1 << move);
-            }  
+            std::cin >> move;
+
+            if (std::cin.fail()){
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                continue;
+            }
+            
+            valid = ~(my_ttt | opp_ttt) & (1 << move);
         }
 
         my_game_msg->ttt(my_ttt | (1 << move));

@@ -68,20 +68,18 @@ public:
     }
 
     void play(int nrounds){
-        int round = 0;
+        int round = 1;
         // extra round to keep user active to publish msg
-        nrounds = (turn_) ? nrounds : nrounds + 1;
+        nrounds = (turn_) ? nrounds : 1 + nrounds;
+
         GameMessage* opp_game_msg = new GameMessage();
         GameMessage* my_game_msg = new GameMessage();
-        while(round < nrounds){
+        while(round < 1 + nrounds){
             // read if there is a new message and is from opp
             if (my_controller_.message_count() > last_message_count_){
                 opp_game_msg = my_controller_.read();
                 last_message_count_ = my_controller_.message_count(); 
                 
-                // blocked until msg is from opp
-                if (opp_game_msg->uid() != oid_) continue;
-
                 std::cout << "opp moved!" << std::endl;
                 turn_ = true;
                 game_api_->opp_moved();
@@ -89,32 +87,32 @@ public:
                 if (game_api_->is_end(my_game_msg, opp_game_msg)){
                     std::cout << "-------- round " << round << " -------" << std::endl;
                     round++;
-                    // print moves
                     int score = game_api_->get_winner(my_game_msg, opp_game_msg);
                     if(score > 0) std::cout << "--- you won! ---" << std::endl;
                     else if(score < 0) std::cout << "--- you lose :( ---" << std::endl;
                     else std::cout << "--- tie ---" << std::endl;
                 }
+
             }
             
-            if (turn_){
+            else if (turn_){
                 my_game_msg->uid(uid_);
 
                 game_api_->get_user_move(my_game_msg, opp_game_msg);
                 game_api_->I_moved();
 
-                if (my_controller_.last_uid() == oid_ && game_api_->is_end(my_game_msg, opp_game_msg)){
+                // publish my move
+                if(my_controller_.publish(my_game_msg)){
+                    turn_ = false;
+                }
+
+                if (game_api_->is_end(my_game_msg, opp_game_msg)){
                     std::cout << "-------- round " << round << " -------" << std::endl;
                     round++;
                     int score = game_api_->get_winner(my_game_msg, opp_game_msg);
                     if(score > 0) std::cout << "--- you won! ---" << std::endl;
                     else if(score < 0) std::cout << "--- you lose :( ---" << std::endl;
                     else std::cout << "--- tie ---" << std::endl;
-                }
-
-                // publish my move
-                if(my_controller_.publish(my_game_msg)){
-                    turn_ = false;
                 }
             }
         }
