@@ -43,16 +43,18 @@ endif()
 message(STATUS "Configuring Game publisher/subscriber example...")
 file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 
+
 # =======================
 # Build executable
 # =======================
-add_executable(DDSGameUser
+add_executable(DDSGameSuite
     # src/GameUser.cpp
+    src/TicTacToe.cpp
     src/main.cpp            # <-- Add this if your wxWidgets window is here
     ${DDS_GAME_SOURCES_CXX}
 )
 
-target_link_libraries(DDSGameUser
+target_link_libraries(DDSGameSuite
     fastdds
     fastcdr
     ${wxWidgets_LIBRARIES}

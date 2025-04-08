@@ -12,10 +12,11 @@ make build folder and cd into it
  mkdir build
  cd build
 ```
-build all the files
+build all the files!
 ```
 cmake ..
 cmake --build .
+
 ```
 
 ### Instructions to build src:
@@ -33,7 +34,7 @@ cd build
 in another terminal
 ```
 cd build 
-.\DDSHelloWorldSubscriber
+.\
 ```
 
 ### Mac OS build cmd
