@@ -49,8 +49,9 @@ file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 # =======================
 add_executable(DDSGameSuite
     # src/GameUser.cpp
-    src/TicTacToe.cpp
-    src/main.cpp            # <-- Add this if your wxWidgets window is here
+    src/GameSuite.cpp
+    src/Grid.cpp
+    src/Player.cpp
     ${DDS_GAME_SOURCES_CXX}
 )
 
