@@ -52,6 +52,8 @@ add_executable(DDSGameSuite
     src/GameSuite.cpp
     src/Grid.cpp
     src/Player.cpp
+    src/AbstractGameGUI.cpp
+    src/TTTGameGUI.cpp
     ${DDS_GAME_SOURCES_CXX}
 )
 
