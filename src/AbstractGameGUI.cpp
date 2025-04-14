@@ -25,7 +25,7 @@ void AbstractGame::waitingDisplayEnter()
     setFrameStatusText("Listening...");
     waiting_panel_->Show();
     parentFrame->Layout();
-    timer->StartOnce(3000); // Simulate connection after 3 seconds
+    timer->StartOnce(1); // Simulate connection after 3 seconds
     Layout(); // Ensure everything redraws properly
 }
 
@@ -35,4 +35,5 @@ void AbstractGame::waitingDisplayExit()
     setFrameStatusText(getFrameStatusText());
     Show();
     Layout(); // Ensure everything redraws properly
+    parentFrame->Layout();
 }

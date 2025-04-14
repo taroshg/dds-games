@@ -7,6 +7,7 @@
 
 #include "AbstractGameGUI.hpp"
 #include "TTTGameGUI.hpp"
+#include "RPSGameGUI.hpp"
 
 #include "DDSGameController.hpp"
 
@@ -30,6 +31,7 @@ private:
     void OnExit(wxCommandEvent& event);
     
     AbstractGame* ttt_panel_;
+    AbstractGame* rps_panel_;
     AbstractGame* current_panel_;
     wxPanel* waiting_panel_;
     wxBoxSizer* frameSizer;
@@ -56,20 +58,23 @@ MyFrame::MyFrame()
 {
     timer = new wxTimer(this, wxID_ANY);
     Bind(wxEVT_TIMER, &MyFrame::OnWaitingTimerComplete, this, timer->GetId());
+    CreateStatusBar();
     
     waiting_panel_ = new wxPanel(this);
     setupWaitingDisplay();
     
     ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer);
+    rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer);
     
     waiting_panel_->Hide();
     ttt_panel_->Hide();
+    rps_panel_->Hide();
 
-    current_panel_ = ttt_panel_;
+    current_panel_ = rps_panel_;
 
-    CreateStatusBar();
     frameSizer = new wxBoxSizer(wxVERTICAL);
     frameSizer->Add(ttt_panel_, 1, wxEXPAND);
+    frameSizer->Add(rps_panel_, 1, wxEXPAND);
     frameSizer->Add(waiting_panel_, 1, wxEXPAND);
     SetSizer(frameSizer);
     Layout(); // Forces the layout to update visually
