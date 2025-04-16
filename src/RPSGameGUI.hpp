@@ -107,13 +107,13 @@ void RPSGameGUI::gameButtonClick(wxCommandEvent& event)
     if(currentPlayer == 0)
     {
         player1Choice = currentChoice;
-        currentPlayer++;
+        currentPlayer = 1;
     }
-    else
+    else if(currentPlayer == 1)
     {
         player2Choice = currentChoice;
         determineRoundWinner(); // Run since both players have now inputed for the current round.
-        currentPlayer--;
+        currentPlayer = 0;
     }
     waitingDisplayEnter();
 }
@@ -136,6 +136,7 @@ bool RPSGameGUI::determineWinner()
  */
 void RPSGameGUI::determineRoundWinner() {
     if (player1Choice == player2Choice) {
+        wxMessageBox("No one wins the round...");
         ties++;
     } else if ((player1Choice == 'r' && player2Choice == 's') ||
                (player1Choice == 'p' && player2Choice == 'r') ||
@@ -158,7 +159,7 @@ void RPSGameGUI::determineRoundWinner() {
             wxMessageBox(player1Name + " wins the game!");
             resetRPSGame();
         } 
-        else {
+        else if (player1Wins < player2Wins) {
             wxMessageBox(player2Name + " wins the game!");
             resetRPSGame();
         } 
