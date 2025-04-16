@@ -13,7 +13,7 @@
 class RPSGameGUI : public AbstractGame 
 {
 public:
-    RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer);
+    RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, int rounds);
     ~RPSGameGUI();
     void setUpGame() override;
     void gameButtonClick(wxCommandEvent& event) override;
@@ -47,7 +47,8 @@ private:
     void determineRoundWinner();
 };
 
-RPSGameGUI::RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer) : AbstractGame(parent, waitingPanel, timer) {
+RPSGameGUI::RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, int rounds) : AbstractGame(parent, waitingPanel, timer) {
+    this->rounds = rounds;
     setUpGame();
 }
 
@@ -118,7 +119,7 @@ void RPSGameGUI::gameButtonClick(wxCommandEvent& event)
 }
 
 std::string RPSGameGUI::getFrameStatusText() {
-    return "Player 1 wins: " + std::to_string(player1Wins) + ". Player 2 wins: " + std::to_string(player2Wins) + ". Round: " + std::to_string(rounds);
+    return "Player 1 wins: " + std::to_string(player1Wins) + ". Player 2 wins: " + std::to_string(player2Wins) +". Round: " + std::to_string(ties + player1Wins + player2Wins + 1) + " of " + std::to_string(rounds) + " It is currently Player " + std::to_string(currentPlayer+1) + "'s turn.";
 }
 
 /**
@@ -139,22 +140,29 @@ void RPSGameGUI::determineRoundWinner() {
     } else if ((player1Choice == 'r' && player2Choice == 's') ||
                (player1Choice == 'p' && player2Choice == 'r') ||
                (player1Choice == 's' && player2Choice == 'p')) {
+        wxMessageBox(player1Name + " wins the round!");
         player1Wins++;
     } else {
+        wxMessageBox(player2Name + " wins the round!");
         player2Wins++;
     }
 
     // Check if the game is over
-    int majorityWins = (rounds % 2 == 0) ? rounds / 2 + 1 : (rounds + 1) / 2;
-
-    rounds++;
-
-    if (player1Wins >= majorityWins) {
-        wxMessageBox(player1Name + " wins the game!");
-        resetRPSGame();
-    } else if (player2Wins >= majorityWins) {
-        wxMessageBox(player2Name + " wins the game!");
-        resetRPSGame();
+    if(player1Wins + player2Wins + ties == rounds)
+    {
+        if (player1Wins == player2Wins) {
+            wxMessageBox("No one wins the game you tied!");
+            resetRPSGame();
+        } 
+        else if (player1Wins > player2Wins) {
+            wxMessageBox(player1Name + " wins the game!");
+            resetRPSGame();
+        } 
+        else {
+            wxMessageBox(player2Name + " wins the game!");
+            resetRPSGame();
+        } 
+        
     }
 }
 
@@ -164,7 +172,6 @@ void RPSGameGUI::setupRPSGame(std::string username1, std::string username2)
     player2Name = username2;
     currentPlayer = 0;
     turnCounter = 1;
-    rounds = 0;
     player1Wins = 0;
     player2Wins = 0;
     ties = 0;
@@ -174,7 +181,6 @@ void RPSGameGUI::resetRPSGame()
 {   
     currentPlayer = 0;
     turnCounter = 1;
-    rounds = 0;
     player1Wins = 0;
     player2Wins = 0;
     ties = 0;

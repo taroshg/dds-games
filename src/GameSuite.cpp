@@ -28,12 +28,15 @@ public:
 private:
     void setupWaitingDisplay();
     void OnWaitingTimerComplete(wxTimerEvent& event);
+    void setupGameSelection();
+    void selectionButtonClick(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     
     AbstractGame* ttt_panel_;
     AbstractGame* rps_panel_;
     AbstractGame* current_panel_;
     wxPanel* waiting_panel_;
+    wxPanel* game_selection_panel_;
     wxBoxSizer* frameSizer;
     wxTimer* timer;
     int currentGame;
@@ -61,48 +64,90 @@ MyFrame::MyFrame()
     CreateStatusBar();
     
     waiting_panel_ = new wxPanel(this);
+    game_selection_panel_ = new wxPanel(this);
     setupWaitingDisplay();
+    setupGameSelection();
     
     ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer);
-    rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer);
+    rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer, 3);
     
     waiting_panel_->Hide();
+    game_selection_panel_->Hide();
     ttt_panel_->Hide();
     rps_panel_->Hide();
-
-    current_panel_ = rps_panel_;
 
     frameSizer = new wxBoxSizer(wxVERTICAL);
     frameSizer->Add(ttt_panel_, 1, wxEXPAND);
     frameSizer->Add(rps_panel_, 1, wxEXPAND);
     frameSizer->Add(waiting_panel_, 1, wxEXPAND);
+    frameSizer->Add(game_selection_panel_, 1, wxEXPAND);
     SetSizer(frameSizer);
     Layout(); // Forces the layout to update visually
 
-
-    current_panel_->waitingDisplayEnter();
-
-    currentGame = 1; // Set currentGame to tic tac toe
+    game_selection_panel_->Show();
 
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+}
+
+void MyFrame::setupGameSelection(){
+    wxGridSizer* gridSizer = new wxGridSizer(1, 2, 5, 5); // 3 rows, 3 columns, 5px padding
+
+    wxBitmap rockButtonImage;
+    rockButtonImage.LoadFile(wxT("./resources/rock.png"), wxBITMAP_TYPE_PNG);
+    wxBitmap xButtonImage;
+    xButtonImage.LoadFile(wxT("./resources/X@0,25x.png"), wxBITMAP_TYPE_PNG);
+    wxSize buttonTileSize = wxSize(100,100);
+
+    wxBitmapButton* RPS = new wxBitmapButton(game_selection_panel_, 201, rockButtonImage, wxDefaultPosition, buttonTileSize);
+    RPS->Bind(wxEVT_BUTTON, &MyFrame::selectionButtonClick, this);
+    wxBitmapButton* TTT = new wxBitmapButton(game_selection_panel_, 202, xButtonImage, wxDefaultPosition, buttonTileSize);
+    TTT->Bind(wxEVT_BUTTON, &MyFrame::selectionButtonClick, this);
+
+    gridSizer->Add(RPS, 0, wxALIGN_CENTER , 5);
+    gridSizer->Add(TTT, 0, wxALIGN_CENTER , 5);
+
+    // Wrap gridSizer inside a box sizer to center it
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText* infoText = new wxStaticText(game_selection_panel_, wxID_ANY, "Choose a game");
+    infoText->SetFont(wxFontInfo(12).Bold());
+    mainSizer->Add(infoText, 0, wxALIGN_CENTER | wxTOP, 20); // Centers grid
+
+    mainSizer->AddStretchSpacer(); // Pushes content down
+    mainSizer->Add(gridSizer, 0, wxALIGN_CENTER | wxALL, 20); // Centers grid
+    mainSizer->AddStretchSpacer(); // Pushes content up
+
+    game_selection_panel_->SetSizer(mainSizer);
+    game_selection_panel_->Layout();
+}
+
+void MyFrame::selectionButtonClick(wxCommandEvent& event) {
+    int id = event.GetId()-200;
+
+    if(id == 1) // Player chose RPS
+    {
+        current_panel_ = rps_panel_;
+    }
+    else if (id == 2) // Player chose TTT
+    {
+        current_panel_ = ttt_panel_;
+    }
+    Layout();
+    game_selection_panel_->Hide();
+    current_panel_->waitingDisplayEnter();
 }
 
 void MyFrame::setupWaitingDisplay()
 {
     waiting_panel_->SetBackgroundColour(*wxLIGHT_GREY);
     wxStaticText* welcomeText = new wxStaticText(waiting_panel_, wxID_ANY, "Waiting On Response from other player");
-    welcomeText->SetFont(wxFontInfo(16).Bold());
 
     wxBoxSizer* waitingSizer = new wxBoxSizer(wxVERTICAL);
 
-    // Add top spacer
-    waitingSizer->AddStretchSpacer(1);
-
     // Center the text horizontally
-    waitingSizer->Add(welcomeText, 0, wxALIGN_CENTER | wxBOTTOM, 20);
-
-    // Add bottom spacer to balance the layout
-    waitingSizer->AddStretchSpacer(1);
+    waitingSizer->AddStretchSpacer(); // Pushes content down
+    waitingSizer->Add(welcomeText, 0, wxALIGN_CENTER | wxALL, 0);
+    waitingSizer->AddStretchSpacer(); // Pushes content up
 
     waiting_panel_->SetSizer(waitingSizer);
     waiting_panel_->Layout();
