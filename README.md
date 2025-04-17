@@ -1,9 +1,7 @@
 # Fast DDS Games
 
 ### Latest update
-- we have a fully working chat room via CLI.
-- Game.idl is defined
-- we have a game loop working (waiting to implement RPS)
+
 
 
 ### Instructions to build:

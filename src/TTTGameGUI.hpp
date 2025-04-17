@@ -40,7 +40,6 @@ private:
     void setupTTTDisplay();
     void updateGraphicalGameGrid();
     bool checkWin();
-
 };
 
 TTTGameGUI::TTTGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer) : AbstractGame(parent, waitingPanel, timer) {

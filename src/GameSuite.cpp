@@ -112,6 +112,7 @@ MyFrame::MyFrame()
             else{
                 waitingText_->SetLabel("waiting for game selection to be made...");
 
+                // starts a thread for waiting for other player to select game
                 std::thread([this]() {
     
                     while (!game_user_->hasReceivedGameChoice()) {

@@ -1,3 +1,6 @@
+#ifndef DDS_GAME_USER
+#define DDS_GAME_USER
+
 #include "DDSGameController.hpp"
 #include "./games/GameWrapper.hpp"
 #include "./games/rps/rps.hpp"
@@ -7,9 +10,9 @@
 
 class GameUser{
 private:
-    unsigned long last_message_count_;
+    unsigned long last_message_count_; // used to keep track of when to read
     DDSGameController my_controller_;
-    int current_game_id_ = -1;
+    int current_game_id_ = -1; // -1 for when no game is selected
 
 public:
     std::string uid_; // my ID
@@ -89,7 +92,8 @@ public:
         // Note: if a third player were to join, then they would be eaves drop, and join game in the middle
         if (my_controller_.message_count() > last_message_count_){
             GameMessage* opp_msg = my_controller_.read();
-            
+            last_message_count_ = my_controller_.message_count(); 
+
             current_game_id_ = opp_msg->game_id();
             std::cout << "running game_id: " << current_game_id_ << std::endl;
             return true;
@@ -150,4 +154,9 @@ public:
             }
         }
     }
+
+    // TODO: publish game messages
+
+    // TODO: read game messages
 };
+#endif

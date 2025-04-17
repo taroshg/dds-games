@@ -7,6 +7,7 @@
 #include <wx/bitmap.h>
 #include <wx/bmpbuttn.h>
 #include <wx/image.h>
+#include "GameUser.hpp"
 
 #include "AbstractGameGUI.hpp"
 
@@ -39,6 +40,8 @@ private:
     std::string player1Name;
     std::string player2Name;
     char player1Choice, player2Choice;
+
+    GameUser* game_user_;
 
     // Helper functions specific to RPS
     void setupRPSGame(std::string username1, std::string username2);
