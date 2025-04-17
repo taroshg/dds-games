@@ -9,6 +9,7 @@ class GameUser{
 private:
     unsigned long last_message_count_;
     DDSGameController my_controller_;
+    int current_game_id_ = -1;
 
 public:
     std::string uid_; // my ID
@@ -57,14 +58,46 @@ public:
 
             if (first_){
                 std::cout << "you go first!" << std::endl;
+                std::cout << "select a game..." << std::endl;
             }
+            else std::cout << "waiting for game selection..." << std::endl;
 
             return true;
         }
         return false;
     }
 
-    void play(int nrounds, GameWrapper* game_api_){
+    bool selectGame(int game_id){
+        GameMessage* msg = new GameMessage();
+        msg->game_id(game_id);
+        msg->message("game selection");
+        if (my_controller_.publish(msg)){
+            current_game_id_ = game_id;
+            return true;
+        }
+        std::cout << "unable to publish game selection" << std::endl;
+        return false;
+    }
+
+    int currentGameID(){
+        return current_game_id_;
+    }
+
+    bool hasReceivedGameChoice(){
+        if (current_game_id_ > 0) return true;
+        // check the last message's game_id
+        // Note: if a third player were to join, then they would be eaves drop, and join game in the middle
+        if (my_controller_.message_count() > last_message_count_){
+            GameMessage* opp_msg = my_controller_.read();
+            
+            current_game_id_ = opp_msg->game_id();
+            std::cout << "running game_id: " << current_game_id_ << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    void playCLI(GameWrapper* game_api_, int nrounds){
         int round = 1;
         // extra round to keep user active to publish msg
         nrounds = (first_) ? nrounds : 1 + nrounds;

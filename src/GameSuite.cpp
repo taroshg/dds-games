@@ -31,12 +31,16 @@ private:
     void OnWaitingTimerComplete(wxTimerEvent& event);
     void setupGameSelection();
     void selectionButtonClick(wxCommandEvent& event);
+    void setGame(int game_id);
     void OnExit(wxCommandEvent& event);
     
     AbstractGame* ttt_panel_;
     AbstractGame* rps_panel_;
     AbstractGame* current_panel_;
+
     wxPanel* waiting_panel_;
+    wxStaticText* waitingText_;
+
     wxPanel* game_selection_panel_;
     wxBoxSizer* frameSizer;
     wxTimer* timer;
@@ -47,9 +51,9 @@ private:
 
 bool MyApp::OnInit()
 {
-    MyFrame *frame = new MyFrame();
-    wxImage::AddHandler(new wxPNGHandler);
     wxInitAllImageHandlers();
+
+    MyFrame *frame = new MyFrame();
     frame->Show();
     return true;
 }
@@ -67,8 +71,10 @@ MyFrame::MyFrame()
     CreateStatusBar();
     
     waiting_panel_ = new wxPanel(this);
-    game_selection_panel_ = new wxPanel(this);
+    waitingText_ = new wxStaticText(waiting_panel_, wxID_ANY, "Waiting On Response from other player");
     setupWaitingDisplay();
+
+    game_selection_panel_ = new wxPanel(this);
     setupGameSelection();
     
     ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer);
@@ -87,16 +93,38 @@ MyFrame::MyFrame()
     SetSizer(frameSizer);
     Layout(); // Forces the layout to update visually
 
+    game_user_ = new GameUser();
+
+    waitingText_->SetLabel("waiting for people to join...");
     waiting_panel_->Show();
+
     // starts a thread for the initialization of game_user
     std::thread([this]() {
-        game_user_ = new GameUser();
-        game_user_->init(); // This blocks, but is in a thread
-    
+        game_user_->init();
+        
         // Return to GUI thread to continue
         wxTheApp->CallAfter([this]() {
-            waiting_panel_->Hide();
-            game_selection_panel_->Show();
+            // if you are first to join show game selection panel
+            if (game_user_->first_){
+                waiting_panel_->Hide();
+                game_selection_panel_->Show();
+            }  
+            else{
+                waitingText_->SetLabel("waiting for game selection to be made...");
+
+                std::thread([this]() {
+    
+                    while (!game_user_->hasReceivedGameChoice()) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    }
+    
+                    wxTheApp->CallAfter([this]() {
+                        waiting_panel_->Hide();
+                        setGame(game_user_->currentGameID());
+                    });
+    
+                }).detach();
+            }
             Layout();
         });
     
@@ -138,16 +166,17 @@ void MyFrame::setupGameSelection(){
 }
 
 void MyFrame::selectionButtonClick(wxCommandEvent& event) {
-    int id = event.GetId()-200;
+    int game_id = event.GetId()-200;
+    // will publish the selection and then move to next screen
+    if (game_user_->selectGame(game_id)){
+        setGame(game_id);
+    }
+    return;
+}
 
-    if(id == 1) // Player chose RPS
-    {
-        current_panel_ = rps_panel_;
-    }
-    else if (id == 2) // Player chose TTT
-    {
-        current_panel_ = ttt_panel_;
-    }
+void MyFrame::setGame(int game_id){
+    if (game_id == 1) current_panel_ = rps_panel_;
+    else if (game_id == 2) current_panel_ = ttt_panel_;
     Layout();
     game_selection_panel_->Hide();
     current_panel_->waitingDisplayEnter();
@@ -155,14 +184,12 @@ void MyFrame::selectionButtonClick(wxCommandEvent& event) {
 
 void MyFrame::setupWaitingDisplay()
 {
-    waiting_panel_->SetBackgroundColour(*wxLIGHT_GREY);
-    wxStaticText* welcomeText = new wxStaticText(waiting_panel_, wxID_ANY, "Waiting On Response from other player");
-
+    waiting_panel_->SetBackgroundColour(*wxBLACK);
     wxBoxSizer* waitingSizer = new wxBoxSizer(wxVERTICAL);
 
     // Center the text horizontally
     waitingSizer->AddStretchSpacer(); // Pushes content down
-    waitingSizer->Add(welcomeText, 0, wxALIGN_CENTER | wxALL, 0);
+    waitingSizer->Add(waitingText_, 0, wxALIGN_CENTER | wxALL, 0);
     waitingSizer->AddStretchSpacer(); // Pushes content up
 
     waiting_panel_->SetSizer(waitingSizer);
@@ -183,6 +210,7 @@ void MyFrame::OnExit(wxCommandEvent& event)
     delete waiting_panel_;
     delete timer;
     delete ttt_panel_;
+    delete rps_panel_;
 
     Close(true);
 }
