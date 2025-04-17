@@ -53,6 +53,8 @@ void AbstractGame::waitingDisplayEnter()
     waiting_panel_->Layout();
     Layout(); // Ensure everything redraws properly
     parentFrame->Layout();
+
+    // TODO: wait for read from DDSGameController
     timer->StartOnce(500); // Simulate connection after 3 seconds
 }
 

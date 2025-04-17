@@ -8,15 +8,16 @@
 #include "AbstractGameGUI.hpp"
 #include "TTTGameGUI.hpp"
 #include "RPSGameGUI.hpp"
+#include "GameUser.hpp"
 
 #include "DDSGameController.hpp"
 
+#include <thread>
 class MyApp : public wxApp
 {
 public:
     bool OnInit() override;
 };
-
 
 wxIMPLEMENT_APP(MyApp);
 
@@ -40,6 +41,8 @@ private:
     wxBoxSizer* frameSizer;
     wxTimer* timer;
     int currentGame;
+
+    GameUser* game_user_;
 };
 
 bool MyApp::OnInit()
@@ -84,7 +87,20 @@ MyFrame::MyFrame()
     SetSizer(frameSizer);
     Layout(); // Forces the layout to update visually
 
-    game_selection_panel_->Show();
+    waiting_panel_->Show();
+    // starts a thread for the initialization of game_user
+    std::thread([this]() {
+        game_user_ = new GameUser();
+        game_user_->init(); // This blocks, but is in a thread
+    
+        // Return to GUI thread to continue
+        wxTheApp->CallAfter([this]() {
+            waiting_panel_->Hide();
+            game_selection_panel_->Show();
+            Layout();
+        });
+    
+    }).detach();
 
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 }

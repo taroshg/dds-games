@@ -115,6 +115,9 @@ void RPSGameGUI::gameButtonClick(wxCommandEvent& event)
         determineRoundWinner(); // Run since both players have now inputed for the current round.
         currentPlayer = 0;
     }
+
+    // TODO: Publish with DDS
+    
     waitingDisplayEnter();
 }
 

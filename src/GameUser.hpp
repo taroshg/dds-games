@@ -1,6 +1,6 @@
 #include "DDSGameController.hpp"
 #include "./games/GameWrapper.hpp"
-#include "./games/rps/RPS.hpp"
+#include "./games/rps/rps.hpp"
 
 #include <thread>
 #include <chrono>
@@ -9,17 +9,15 @@ class GameUser{
 private:
     unsigned long last_message_count_;
     DDSGameController my_controller_;
-    GameWrapper* game_api_;
-    
+
 public:
     std::string uid_; // my ID
     std::string oid_; // opponent ID
 
     bool turn_;
-    GameUser(GameWrapper* game_api): last_message_count_(0), 
-                                 turn_(false) {
-                                    game_api_ = game_api;
-                                 }
+    bool first_;
+    GameUser(): last_message_count_(0), 
+                                 turn_(false) {}
 
     bool init(){
         if (my_controller_.init()){
@@ -53,12 +51,11 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
             // if you are first participant, you start!
-            turn_ = my_controller_.participants()[0] == uid_;
+            turn_ = first_ = my_controller_.participants()[0] == uid_;
 
             last_message_count_ = my_controller_.message_count();
 
-            if (turn_){
-                game_api_->is_first_to_play();
+            if (first_){
                 std::cout << "you go first!" << std::endl;
             }
 
@@ -67,10 +64,13 @@ public:
         return false;
     }
 
-    void play(int nrounds){
+    void play(int nrounds, GameWrapper* game_api_){
         int round = 1;
         // extra round to keep user active to publish msg
-        nrounds = (turn_) ? nrounds : 1 + nrounds;
+        nrounds = (first_) ? nrounds : 1 + nrounds;
+
+        // important to set for the game logic
+        game_api_->set_first(first_);
 
         GameMessage* opp_game_msg = new GameMessage();
         GameMessage* my_game_msg = new GameMessage();
