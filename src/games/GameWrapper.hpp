@@ -35,7 +35,7 @@ public:
         return my_moves_ == opp_moves_;
     }
 
-    void reset(GameMessage* game_msg){
+    void hard_reset(GameMessage* game_msg){
         game_msg->ttt(0);
         game_msg->rps(0);
         game_msg->c4(0);

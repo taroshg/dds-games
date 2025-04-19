@@ -14,12 +14,13 @@
 class RPSGameGUI : public AbstractGame 
 {
 public:
-    RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, int rounds);
+    RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user, int rounds);
     ~RPSGameGUI();
     void setUpGame() override;
     void gameButtonClick(wxCommandEvent& event) override;
     bool determineWinner() override;
     std::string getFrameStatusText() override;
+    void updateDisplay() override;
 
 private:
     wxBitmap rockButtonImage;
@@ -35,7 +36,6 @@ private:
     int player1Wins;
     int player2Wins;
     int ties;
-    int currentPlayer; // 0 for player1, 1 for player2
 
     std::string player1Name;
     std::string player2Name;
@@ -50,7 +50,7 @@ private:
     void determineRoundWinner();
 };
 
-RPSGameGUI::RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, int rounds) : AbstractGame(parent, waitingPanel, timer) {
+RPSGameGUI::RPSGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user, int rounds) : AbstractGame(parent, waitingPanel, timer, game_user) {
     this->rounds = rounds;
     setUpGame();
 }
@@ -107,25 +107,42 @@ void RPSGameGUI::gameButtonClick(wxCommandEvent& event)
         currentChoice = 's';
     }
     
-    if(currentPlayer == 0)
-    {
-        player1Choice = currentChoice;
-        currentPlayer = 1;
-    }
-    else if(currentPlayer == 1)
-    {
-        player2Choice = currentChoice;
-        determineRoundWinner(); // Run since both players have now inputed for the current round.
-        currentPlayer = 0;
-    }
+    player1Choice = currentChoice;
 
-    // TODO: Publish with DDS
+    // // FASTDDS publish code
+    // if (game_user_->turn_){
+    //     my_msg_->rps(id);
+    //     game_user_->sendGameMessage(my_msg_);
+    // }
+
+    // // enters waiting display until, opp message is read
+    // waitingDisplayEnter();
+
+    // while(!game_user_->messageAvailable())
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // opp_msg_ = game_user_->readGameMessage();
     
-    waitingDisplayEnter();
+    // switch (opp_msg_->rps())
+    // {
+    //     case 1:
+    //         player2Choice = 'r';
+    //         break;
+    //     case 2:
+    //         player2Choice = 'p';
+    //         break;
+    //     case 3:
+    //         player2Choice = 's';
+    //         break;
+    // }
+
+    //  // potential bug, with not checking for full_turn on end
+    // determineRoundWinner();
+
 }
 
 std::string RPSGameGUI::getFrameStatusText() {
-    return "Player 1 wins: " + std::to_string(player1Wins) + ". Player 2 wins: " + std::to_string(player2Wins) +". Round: " + std::to_string(ties + player1Wins + player2Wins + 1) + " of " + std::to_string(rounds) + " It is currently Player " + std::to_string(currentPlayer+1) + "'s turn.";
+    return "Player 1 wins: " + std::to_string(player1Wins) + ". Player 2 wins: " + std::to_string(player2Wins) +". Round: " + std::to_string(ties + player1Wins + player2Wins + 1) + " of " + std::to_string(rounds);
 }
 
 /**
@@ -177,7 +194,6 @@ void RPSGameGUI::setupRPSGame(std::string username1, std::string username2)
 {   
     player1Name = username1;
     player2Name = username2;
-    currentPlayer = 0;
     turnCounter = 1;
     player1Wins = 0;
     player2Wins = 0;
@@ -186,13 +202,11 @@ void RPSGameGUI::setupRPSGame(std::string username1, std::string username2)
 
 void RPSGameGUI::resetRPSGame()
 {   
-    currentPlayer = 0;
     turnCounter = 1;
     player1Wins = 0;
     player2Wins = 0;
     ties = 0;
 }
-
 
 void RPSGameGUI::setupRPSDisplay()
 {
@@ -204,6 +218,10 @@ void RPSGameGUI::setupRPSDisplay()
     rockButtonImage.LoadFile(wxT("./resources/rock.png"), wxBITMAP_TYPE_PNG);
     paperButtonImage.LoadFile(wxT("./resources/paper.png"), wxBITMAP_TYPE_PNG);
     scissorsButtonImage.LoadFile(wxT("./resources/scissors.png"), wxBITMAP_TYPE_PNG);
+}
+
+void RPSGameGUI::updateDisplay(){
+    return;
 }
 
 #endif

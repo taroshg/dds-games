@@ -48,10 +48,7 @@ file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 # Build executable
 # =======================
 add_executable(DDSGameSuite
-    # src/GameUser.cpp
     src/GameSuite.cpp
-    src/Grid.cpp
-    src/Player.cpp
     ${DDS_GAME_SOURCES_CXX}
 )
 

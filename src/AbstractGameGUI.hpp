@@ -3,15 +3,21 @@
 
 #include <wx/wx.h>
 #include <string.h>
+#include "GameUser.hpp"
 
 class AbstractGame : public wxPanel 
 {
+protected:
+    GameUser* game_user_;
+    GameMessage* my_msg_;
+    GameMessage* opp_msg_;
 public:
-    AbstractGame(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer);
+    AbstractGame(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user);
     virtual void setUpGame() = 0;
     virtual void gameButtonClick(wxCommandEvent& event) = 0;
     virtual bool determineWinner() = 0;
     virtual std::string getFrameStatusText() = 0;
+    virtual void updateDisplay() = 0;
     ~AbstractGame();
     
     wxPanel* getWaitingDisplay();
@@ -25,15 +31,18 @@ private:
     wxFrame* parentFrame;
 };
 
-AbstractGame::AbstractGame(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer) : wxPanel(parent) {
+AbstractGame::AbstractGame(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user) : 
+wxPanel(parent),
+my_msg_(new GameMessage()),
+opp_msg_(new GameMessage())
+{
     this->parentFrame = parent;
     this->timer = timer;
     this->waiting_panel_= waitingPanel;
+    this->game_user_ = game_user;
 }
 
-AbstractGame::~AbstractGame() {
-
-}
+AbstractGame::~AbstractGame() {}
 
 void AbstractGame::setFrameStatusText(std::string input) {
     parentFrame->SetStatusText(input);
@@ -54,8 +63,15 @@ void AbstractGame::waitingDisplayEnter()
     Layout(); // Ensure everything redraws properly
     parentFrame->Layout();
 
-    // TODO: wait for read from DDSGameController
-    timer->StartOnce(500); // Simulate connection after 3 seconds
+    std::thread([this]() {
+        while(!game_user_->messageAvailable())
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        
+        wxTheApp->CallAfter([this](){
+            timer->StartOnce(100);
+            updateDisplay();
+        });
+    }).detach();
 }
 
 void AbstractGame::waitingDisplayExit()

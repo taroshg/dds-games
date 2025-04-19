@@ -12,8 +12,11 @@ private:
                                 73,  // right col
                                 273, // right-left diag.
                                 84}; // left-right diag.
+
+    unsigned long my_board;
+    unsigned long opp_board;
 public:
-    TTT(): GameWrapper() {};
+    TTT(): GameWrapper(), my_board(0), opp_board(0) {};
 
     void get_user_move(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
         int move; // pos of square marked
@@ -51,10 +54,58 @@ public:
                 continue;
             }
             
-            valid = ~(my_ttt | opp_ttt) & (1 << move);
+            valid = make_move(move);
         }
 
-        my_game_msg->ttt(my_ttt | (1 << move));
+        my_game_msg->ttt(my_board);
+    }
+
+    bool make_move(int pos){
+        // if pos is in a open space
+        if (valid_move(pos)){
+            // place my marker on pos
+            my_board = (my_board | (1 << pos));
+            return true;
+        }
+        return false;
+    }
+
+    bool valid_move(int pos){
+        return ~(occupied()) & (1 << pos);
+    }
+
+    std::string boardString(){
+        std::stringstream out;
+        for(int i = 0; i < 9; ++i){
+            if (my_board & (1 << i))
+                out << 'x';
+            else if (opp_board & (1 << i))
+                out << 'o';
+            else
+                out << '.';
+
+            if (i % 3 == 2)
+                out << '\n';
+            else
+                out << ' ';
+        }
+        return out.str();
+    }
+
+    unsigned long occupied(){
+        return my_board | opp_board;
+    }
+
+    unsigned long myState(){
+        return my_board;
+    }
+
+    unsigned long oppState(){
+        return opp_board;
+    }
+
+    void setOppState(unsigned long opp_state){
+        opp_board = opp_state;
     }
 
     int get_winner(GameMessage* game_msg, GameMessage* opp_game_msg) override {
@@ -69,17 +120,20 @@ public:
                 return -1;
             }
         }
-
         return 0;
     }
 
     bool is_end(GameMessage* game_msg, GameMessage* opp_game_msg) override{
         int winner = get_winner(game_msg, opp_game_msg);
-
         // if there is no winner and the board is filled
         if (winner != 0 || (opp_moves_ + my_moves_) > 7) 
             return true;
 
         return false;
+    }
+
+    void reset(){
+        my_board = 0;
+        opp_board = 0;
     }
 };

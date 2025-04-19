@@ -8,19 +8,19 @@
 #include <wx/bmpbuttn.h>
 #include <wx/image.h>
 
-#include "Grid.hpp"
-#include "Player.hpp"
+#include "games/ttt/ttt.hpp"
 
 #include "AbstractGameGUI.hpp"
 
 class TTTGameGUI : public AbstractGame 
 {
 public:
-    TTTGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer);
+    TTTGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user);
     ~TTTGameGUI();
     void setUpGame() override;
     void gameButtonClick(wxCommandEvent& event) override;
     bool determineWinner() override;
+    void updateDisplay() override;
     std::string getFrameStatusText() override;
 
 private:
@@ -28,27 +28,20 @@ private:
     wxBitmap oButtonImage;
     wxBitmap blankButtonImage;
     wxSize buttonTileSize;
-    int turnCounter;
     wxBitmapButton* buttons[9]; // Store button references
 
-    Player p1{"1"};
-    Player p2{"2"};
-    Grid gameGrid;
-    Player currentPlayer;
+    TTT ttt;
 
-    void setupTTTGame(std::string username1, std::string username2);
+    void setupTTTGame();
     void setupTTTDisplay();
-    void updateGraphicalGameGrid();
-    bool checkWin();
 };
 
-TTTGameGUI::TTTGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer) : AbstractGame(parent, waitingPanel, timer) {
+TTTGameGUI::TTTGameGUI(wxFrame* parent, wxPanel* waitingPanel, wxTimer* timer, GameUser* game_user) : 
+AbstractGame(parent, waitingPanel, timer, game_user) {
     setUpGame();
 }
 
-TTTGameGUI::~TTTGameGUI() {
-    
-}
+TTTGameGUI::~TTTGameGUI() {}
 
 // AbstractGame methods
 void TTTGameGUI::setUpGame()
@@ -56,13 +49,13 @@ void TTTGameGUI::setUpGame()
     // Create a grid sizer for the 3x3 layout
     wxGridSizer* gridSizer = new wxGridSizer(3, 3, 5, 5); // 3 rows, 3 columns, 5px padding
 
-    setupTTTGame("Player1", "Player2");
+    setupTTTGame();
     setupTTTDisplay();
 
     // Create and add 9 bitmap buttons to the sizer
     for (int i = 0; i < 9; i++)
     {
-        buttons[i] = new wxBitmapButton(this, i+1, blankButtonImage, wxDefaultPosition, buttonTileSize);
+        buttons[i] = new wxBitmapButton(this, i, blankButtonImage, wxDefaultPosition, buttonTileSize);
         buttons[i]->Bind(wxEVT_BUTTON, &TTTGameGUI::gameButtonClick, this);
         gridSizer->Add(buttons[i], 0, wxALIGN_CENTER , 5);
     }
@@ -78,66 +71,53 @@ void TTTGameGUI::setUpGame()
 
 void TTTGameGUI::gameButtonClick(wxCommandEvent& event)
 {
-    int id = event.GetId();
-    bool isO = currentPlayer.getSymbol() == "O";
-    bool validMove = false;
-    
-    validMove = gameGrid.addToGrid(id, isO); // Flag to see if game grid was actually updated
+    int pos = event.GetId();
+ 
+    if(ttt.make_move(pos)){
+        // FASTDDS publish code
+        std::cout << "sending: \n" << ttt.boardString() << std::endl;
+        my_msg_->ttt(ttt.myState());
+        game_user_->sendGameMessage(my_msg_);
 
-    updateGraphicalGameGrid();
+        updateDisplay();
+        waitingDisplayEnter();
+    }
+    else{
+        wxMessageBox("Please choose an empty slot on the board");
+    }
 
-    // Check for a win
-    if (gameGrid.verifyWin()) {
-        wxMessageBox(currentPlayer.getName() + " Wins!");
-        setupTTTGame(p1.getName(), p2.getName());
-        updateGraphicalGameGrid();
-    }
-    else if (turnCounter == 9) // Check if board is full with no winning patern and reset if so
-    {
-        wxMessageBox("Board filled with no winning patern nobody wins :(");
-        setupTTTGame(p1.getName(), p2.getName());
-        updateGraphicalGameGrid();
-    }
-    else // Run turn advancement stuff if game hasn't been won yet
-    {
-        if(validMove & currentPlayer.getSymbol() == p1.getSymbol()) // Use validMove to see if the turn should be advanced
-        {
-            currentPlayer = p2;
-            turnCounter++;
-        }
-        else if(validMove) // Advance turn but this turn had p2 making the move
-        {
-            currentPlayer = p1;
-            turnCounter++;
-        }
-        else // Invalid choice made prompt user to make another choice
-        {
-            wxMessageBox("Please choose an empty slot on the board");
-        }
-    }
-    waitingDisplayEnter();
+    // determineWinner();
 }
 
 std::string TTTGameGUI::getFrameStatusText() {
-    return "It is currently Player " + currentPlayer.getName() + "'s turn. Symbol: (" + currentPlayer.getSymbol() + ") Turn: " + std::to_string(turnCounter);
+    if (game_user_->turn_){
+        return "it is your turn";
+    }
+    else return "it is opp turn";
 }
 
 bool TTTGameGUI::determineWinner()
 {
-    return gameGrid.verifyWin();
+    if(ttt.is_end(my_msg_, opp_msg_)){
+        int winner = ttt.get_winner(my_msg_, opp_msg_);
+        
+        if (winner > 0) wxMessageBox("You Win!!");
+        if (winner < 0) wxMessageBox("You Lose :(");
+        if (winner == 0) wxMessageBox("it is a draw!");
+
+        setupTTTGame();
+        updateDisplay();
+
+        return true;
+    }
+    return false;
 }
 
-// TTT Specific Private Helper methods
-
-void TTTGameGUI::setupTTTGame(std::string username1, std::string username2)
+void TTTGameGUI::setupTTTGame()
 {
-    gameGrid.resetGrid();
-    p1.setSymbol("O");
-    p2.setSymbol("X");
-    p1.setName(username1);
-    p2.setName(username2);
-    currentPlayer = p1;
-    turnCounter = 1;
+    ttt.reset();
+    ttt.hard_reset(my_msg_);
+    ttt.hard_reset(opp_msg_);
 }
 
 /**
@@ -174,23 +154,32 @@ void TTTGameGUI::setupTTTDisplay()
     }
 }
 
-void TTTGameGUI::updateGraphicalGameGrid()
+void TTTGameGUI::updateDisplay()
 {
+    opp_msg_ = game_user_->readGameMessage();
+    if(opp_msg_ != nullptr){
+        ttt.setOppState(opp_msg_->ttt());
+        std::cout << "recieved: \n" << ttt.boardString() << std::endl;
+        std::cout << game_user_->lastMessageCount() << " / " << game_user_->messageCount() << std::endl;
+    }
+    else std::cout << "nothing to read!" << std::endl;
+
+    wxBitmap myMarker = game_user_->first_ ? xButtonImage : oButtonImage;
+    wxBitmap oppMarker = game_user_->first_ ? oButtonImage : xButtonImage;
+
     for (int i = 0; i < 9; i++)
-    {
-        std::string symbol = gameGrid.getGridSymbol(i);
+    {   
+        // if my marker is at i
+        if(ttt.myState() & (1 << i)){
+            buttons[i]->SetBitmap(myMarker);
+        }
         
-        if(symbol == "O")
-        {
-            buttons[i]->SetBitmap(oButtonImage);
-        }
-        else if (symbol == "X") {
-            buttons[i]->SetBitmap(xButtonImage);
-        }
-        else {
-            buttons[i]->SetBitmap(blankButtonImage);
+        // if opp marker is at i
+        else if(ttt.oppState() & (1 << i)){
+            buttons[i]->SetBitmap(oppMarker);
         }
     }
-}
 
+    // determineWinner();
+}
 #endif

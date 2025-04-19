@@ -66,6 +66,8 @@ enum
 MyFrame::MyFrame()
         : wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
 {
+    game_user_ = new GameUser();
+
     timer = new wxTimer(this, wxID_ANY);
     Bind(wxEVT_TIMER, &MyFrame::OnWaitingTimerComplete, this, timer->GetId());
     CreateStatusBar();
@@ -77,8 +79,8 @@ MyFrame::MyFrame()
     game_selection_panel_ = new wxPanel(this);
     setupGameSelection();
     
-    ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer);
-    rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer, 3);
+    ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer, game_user_);
+    rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer, game_user_, 3);
     
     waiting_panel_->Hide();
     game_selection_panel_->Hide();
@@ -93,8 +95,6 @@ MyFrame::MyFrame()
     SetSizer(frameSizer);
     Layout(); // Forces the layout to update visually
 
-    game_user_ = new GameUser();
-
     waitingText_->SetLabel("waiting for people to join...");
     waiting_panel_->Show();
 
@@ -107,6 +107,7 @@ MyFrame::MyFrame()
             // if you are first to join show game selection panel
             if (game_user_->first_){
                 waiting_panel_->Hide();
+                waitingText_->SetLabel("waiting for opp...");
                 game_selection_panel_->Show();
             }  
             else{
@@ -118,9 +119,10 @@ MyFrame::MyFrame()
                     while (!game_user_->hasReceivedGameChoice()) {
                         std::this_thread::sleep_for(std::chrono::milliseconds(500));
                     }
-    
+
                     wxTheApp->CallAfter([this]() {
                         waiting_panel_->Hide();
+                        waitingText_->SetLabel("waiting for opp...");
                         setGame(game_user_->currentGameID());
                     });
     
@@ -180,7 +182,16 @@ void MyFrame::setGame(int game_id){
     else if (game_id == 2) current_panel_ = ttt_panel_;
     Layout();
     game_selection_panel_->Hide();
-    current_panel_->waitingDisplayEnter();
+
+    //  if first, dont show waiting display, and show current game panel
+    if (game_user_->first_){
+        current_panel_->waitingDisplayExit();
+        Layout();
+        
+    }// if your not first to move, you will wait
+    else{
+        current_panel_->waitingDisplayEnter();
+    }
 }
 
 void MyFrame::setupWaitingDisplay()

@@ -155,8 +155,33 @@ public:
         }
     }
 
-    // TODO: publish game messages
+    unsigned long messageCount(){
+        return my_controller_.message_count();
+    }
 
-    // TODO: read game messages
+    unsigned long lastMessageCount(){
+        return last_message_count_;
+    }
+
+    bool sendGameMessage(GameMessage* msg){
+        msg->uid(uid_);
+        if (my_controller_.publish(msg)){
+            turn_ = false;
+            return true;
+        }
+        return false;
+    }
+    bool messageAvailable(){
+        return my_controller_.message_count() > last_message_count_;
+    }
+
+    GameMessage* readGameMessage(){
+        if (messageAvailable()){
+            last_message_count_ = my_controller_.message_count();
+            turn_ = true;
+            return my_controller_.read();
+        }
+        return nullptr;
+    }
 };
 #endif
