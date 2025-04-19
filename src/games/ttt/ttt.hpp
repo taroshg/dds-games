@@ -18,6 +18,8 @@ private:
 public:
     TTT(): GameWrapper(), my_board(0), opp_board(0) {};
 
+    ~TTT(){}
+
     void get_user_move(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
         int move; // pos of square marked
         unsigned long my_ttt = my_game_msg->ttt();
@@ -135,5 +137,7 @@ public:
     void reset(){
         my_board = 0;
         opp_board = 0;
+        opp_moves_ = 0;
+        my_moves_ = 0;
     }
 };

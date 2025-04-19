@@ -86,12 +86,12 @@ void TTTGameGUI::gameButtonClick(wxCommandEvent& event)
         wxMessageBox("Please choose an empty slot on the board");
     }
 
-    // determineWinner();
+    determineWinner();
 }
 
 std::string TTTGameGUI::getFrameStatusText() {
     if (game_user_->turn_){
-        return "it is your turn";
+        return game_user_->first_ ? "it is your turn (you are X)" : "it is your turn (you are O)";
     }
     else return "it is opp turn";
 }
@@ -116,8 +116,8 @@ bool TTTGameGUI::determineWinner()
 void TTTGameGUI::setupTTTGame()
 {
     ttt.reset();
-    ttt.hard_reset(my_msg_);
-    ttt.hard_reset(opp_msg_);
+    my_msg_ = new GameMessage();
+    opp_msg_ = new GameMessage();
 }
 
 /**
@@ -156,13 +156,12 @@ void TTTGameGUI::setupTTTDisplay()
 
 void TTTGameGUI::updateDisplay()
 {
-    opp_msg_ = game_user_->readGameMessage();
-    if(opp_msg_ != nullptr){
+    if(game_user_->messageAvailable()){
+        opp_msg_ = game_user_->readGameMessage();
         ttt.setOppState(opp_msg_->ttt());
         std::cout << "recieved: \n" << ttt.boardString() << std::endl;
         std::cout << game_user_->lastMessageCount() << " / " << game_user_->messageCount() << std::endl;
     }
-    else std::cout << "nothing to read!" << std::endl;
 
     wxBitmap myMarker = game_user_->first_ ? xButtonImage : oButtonImage;
     wxBitmap oppMarker = game_user_->first_ ? oButtonImage : xButtonImage;
@@ -178,8 +177,12 @@ void TTTGameGUI::updateDisplay()
         else if(ttt.oppState() & (1 << i)){
             buttons[i]->SetBitmap(oppMarker);
         }
+
+        else {
+            buttons[i]->SetBitmap(blankButtonImage);
+        }
     }
 
-    // determineWinner();
+    determineWinner();
 }
 #endif
