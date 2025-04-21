@@ -5,7 +5,7 @@ project(DDSGame)
 # =======================
 # Find OpenSSL for FastDDS
 # =======================
-set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-3-1-8-Win64")
+set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-3-1-8-Win64") #Point to the install path for OpenSSL optionally use version 3.1.4 since that's what fastDDS likes
 set(OPENSSL_USE_STATIC_LIBS TRUE)  # Optional: helps avoid linking errors on Windows
 find_package(OpenSSL REQUIRED)
 
@@ -23,8 +23,8 @@ endif()
 # =======================
 # Find wxWidgets
 # =======================
-set(wxWidgets_ROOT_DIR "C:/wxWidgets-3.2.7")
-set(wxWidgets_LIB_DIR "C:/wxWidgets-3.2.7/build/lib/vc_x64_lib")
+set(wxWidgets_ROOT_DIR "C:/wxWidgets-3.2.7") #Point to your install path for wxWidgets
+set(wxWidgets_LIB_DIR "C:/wxWidgets-3.2.7/build/lib/vc_x64_lib") #build wxWidgets using Cmake using the same wxWidgets installs build folder point to the "lib/vc_x64_lib" path that should be in build therefater
 set(wxWidgets_CONFIGURATION mswu)  # Unicode build
 
 find_package(wxWidgets REQUIRED COMPONENTS core base)
