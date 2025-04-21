@@ -3,6 +3,13 @@ cmake_minimum_required(VERSION 3.20)
 project(DDSGame)
 
 # =======================
+# Find OpenSSL for FastDDS
+# =======================
+set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-3-1-8-Win64")
+set(OPENSSL_USE_STATIC_LIBS TRUE)  # Optional: helps avoid linking errors on Windows
+find_package(OpenSSL REQUIRED)
+
+# =======================
 # Find FastDDS & FastCDR
 # =======================
 if(NOT fastcdr_FOUND)
@@ -16,8 +23,13 @@ endif()
 # =======================
 # Find wxWidgets
 # =======================
+set(wxWidgets_ROOT_DIR "C:/wxWidgets-3.2.7")
+set(wxWidgets_LIB_DIR "C:/wxWidgets-3.2.7/build/lib/vc_x64_lib")
+set(wxWidgets_CONFIGURATION mswu)  # Unicode build
+
 find_package(wxWidgets REQUIRED COMPONENTS core base)
 include(${wxWidgets_USE_FILE})
+include_directories(${wxWidgets_INCLUDE_DIRS})
 
 # Optional: manually include wxWidgets include directories
 # This helps with "wx/setup.h" not found issues
@@ -47,7 +59,7 @@ file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 # =======================
 # Build executable
 # =======================
-add_executable(DDSGameSuite
+add_executable(DDSGameSuite WIN32
     src/GameSuite.cpp
     ${DDS_GAME_SOURCES_CXX}
 )
