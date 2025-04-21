@@ -36,10 +36,10 @@ wxPanel(parent),
 my_msg_(new GameMessage()),
 opp_msg_(new GameMessage())
 {
+    this->game_user_ = game_user;
     this->parentFrame = parent;
     this->timer = timer;
     this->waiting_panel_= waitingPanel;
-    this->game_user_ = game_user;
 }
 
 AbstractGame::~AbstractGame() {}

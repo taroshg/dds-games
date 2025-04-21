@@ -75,6 +75,7 @@ public:
         msg->game_id(game_id);
         msg->message("game selection");
         if (my_controller_.publish(msg)){
+            last_message_count_++;
             current_game_id_ = game_id;
             return true;
         }

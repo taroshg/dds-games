@@ -64,10 +64,8 @@ enum
 };
 
 MyFrame::MyFrame()
-        : wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
+: wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
 {
-    game_user_ = new GameUser();
-
     timer = new wxTimer(this, wxID_ANY);
     Bind(wxEVT_TIMER, &MyFrame::OnWaitingTimerComplete, this, timer->GetId());
     CreateStatusBar();
@@ -78,6 +76,8 @@ MyFrame::MyFrame()
 
     game_selection_panel_ = new wxPanel(this);
     setupGameSelection();
+
+    game_user_ = new GameUser();
     
     ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer, game_user_);
     rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer, game_user_, 3);
@@ -122,7 +122,6 @@ MyFrame::MyFrame()
 
                     wxTheApp->CallAfter([this]() {
                         waiting_panel_->Hide();
-                        waitingText_->SetLabel("waiting for opp...");
                         setGame(game_user_->currentGameID());
                     });
     
@@ -183,6 +182,7 @@ void MyFrame::setGame(int game_id){
     Layout();
     game_selection_panel_->Hide();
 
+    waitingText_->SetLabel("waiting for opp...");
     //  if first, dont show waiting display, and show current game panel
     if (game_user_->first_){
         current_panel_->waitingDisplayExit();
