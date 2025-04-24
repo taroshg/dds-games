@@ -72,6 +72,7 @@ MyFrame::MyFrame()
     
     waiting_panel_ = new wxPanel(this);
     waitingText_ = new wxStaticText(waiting_panel_, wxID_ANY, "Waiting On Response from other player");
+    waitingText_->SetForegroundColour(wxColor(255,255,255,255));
     setupWaitingDisplay();
 
     game_selection_panel_ = new wxPanel(this);
