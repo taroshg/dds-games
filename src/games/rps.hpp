@@ -1,4 +1,4 @@
-#include "../GameWrapper.hpp"
+#include "GameWrapper.hpp"
 #include <iostream>
 
 class RPS : public GameWrapper {

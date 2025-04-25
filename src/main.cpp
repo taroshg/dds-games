@@ -1,11 +1,6 @@
-#include <wx/wxprec.h>
- 
-#ifndef WX_PRECOMP
-    #include <wx/wx.h>
-#endif
-
 #include "GameUser.hpp"
-#include "./games/ttt/ttt.hpp"
+#include "./games/ttt.hpp"
+#include "./games/rps.hpp"
 
 int main(){
     GameWrapper* rps = new RPS();
