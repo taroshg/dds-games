@@ -31,6 +31,14 @@ protected:
 
     bool is_opp_active_;
 
+    void OnResize(wxSizeEvent& event) {
+        if (waiting_panel_) {
+            waiting_panel_->SetSize(GetSize());  // Always stretch the waiting panel to cover the game
+            waiting_panel_->Raise();              // Make sure it stays above
+        }
+        event.Skip(); // Let other things process resize
+    }
+
 public:
 
     virtual void gameButtonClick(wxCommandEvent& event) = 0;
@@ -50,6 +58,7 @@ public:
     {
         wxButton* HOME_BTN = new wxButton(this, wxID_ANY, "back", wxDefaultPosition);
         HOME_BTN->Bind(wxEVT_BUTTON, &AbstractGamePanel::onHomeButtonPress, this);
+        Bind(wxEVT_SIZE, &AbstractGamePanel::OnResize, this);
     }
 
     ~AbstractGamePanel() {}
@@ -63,10 +72,8 @@ public:
         setFrameStatusText("Listening...");
         waiting_panel_->Text("waiting for move..");
         waiting_panel_->Show();
-        waiting_panel_->Fit();
-        waiting_panel_->Layout();
         parentFrame->Layout();
-
+    
         std::thread([this]() {
             while(!game_user_->messageAvailable())
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -101,5 +108,6 @@ public:
     void setFrameStatusText(std::string input) {
         parentFrame->SetStatusText(input);
     }
+
 };
 #endif

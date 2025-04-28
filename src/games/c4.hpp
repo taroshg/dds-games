@@ -4,8 +4,8 @@
 
 class C4 : public GameWrapper {
 private:
-    unsigned long my_board;
-    unsigned long opp_board;
+    uint64_t my_board;
+    uint64_t opp_board;
 public:
     C4(): GameWrapper(), my_board(0), opp_board(0) {};
 
