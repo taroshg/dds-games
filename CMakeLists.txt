@@ -13,6 +13,13 @@ if(WIN32)
 endif()
 
 # =======================
+# Find OpenSSL for FastDDS
+# =======================
+set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-3-1-8-Win64") #Point to the install path for OpenSSL optionally use version 3.1.4 since that's what fastDDS likes
+set(OPENSSL_USE_STATIC_LIBS TRUE)  # Optional: helps avoid linking errors on Windows
+find_package(OpenSSL REQUIRED)
+
+# =======================
 # Find FastDDS & FastCDR
 # =======================
 if(NOT fastcdr_FOUND)
@@ -26,15 +33,16 @@ endif()
 # =======================
 # Find wxWidgets
 # =======================
-
 if(WIN32)
     set(wxWidgets_ROOT_DIR "C:/wxWidgets-3.2.7") #Point to your install path for wxWidgets
     set(wxWidgets_LIB_DIR "C:/wxWidgets-3.2.7/build/lib/vc_x64_lib") #build wxWidgets using Cmake using the same wxWidgets installs build folder point to the "lib/vc_x64_lib" path that should be in build therefater
     set(wxWidgets_CONFIGURATION mswu)  # Unicode build
 endif()
+=======
 
 find_package(wxWidgets REQUIRED COMPONENTS core base)
 include(${wxWidgets_USE_FILE})
+include_directories(${wxWidgets_INCLUDE_DIRS})
 
 # Optional: manually include wxWidgets include directories
 # This helps with "wx/setup.h" not found issues
@@ -60,9 +68,6 @@ endif()
 message(STATUS "Configuring Game publisher/subscriber example...")
 file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
 
-
-
-
 if(WIN32)
 # =======================
 # Build executable Window
@@ -75,7 +80,7 @@ else()
 # =======================
 # Build executable Mac OS and Linux
 # =======================
-add_executable(DDSGameSuite
+add_executable(DDSGameSuite WIN32
     src/GameSuite.cpp
     ${DDS_GAME_SOURCES_CXX}
 )
