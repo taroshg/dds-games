@@ -41,7 +41,7 @@ endif()
 # Source files
 # =======================
 message(STATUS "Configuring Game publisher/subscriber example...")
-file(GLOB DDS_GAME_SOURCES_CXX "src/*.cxx")
+file(GLOB DDS_GAME_SOURCES_CXX "src/idl/*.cxx")
 
 
 # =======================

@@ -7,11 +7,10 @@
 #include <wx/bitmap.h>
 #include <wx/bmpbuttn.h>
 #include <wx/image.h>
+
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
-
 #include "games/c4.hpp"
-
 #include "AbstractGameGUI.hpp"
 
 class C4GameGUI : public AbstractGamePanel 

@@ -1,7 +1,7 @@
 #ifndef DDS_GAME_CONTROLLER_HEADER
 #define DDS_GAME_CONTROLLER_HEADER
 
-#include "GameMessagePubSubTypes.hpp"
+#include "idl/GameMessagePubSubTypes.hpp"
 
 #include <chrono>
 #include <thread>
