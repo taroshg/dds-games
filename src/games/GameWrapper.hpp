@@ -1,7 +1,7 @@
 #ifndef GAME_WRAPPER_HEADER
 #define GAME_WRAPPER_HEADER
 
-#include "../GameMessagePubSubTypes.hpp"
+#include "../idl/GameMessagePubSubTypes.hpp"
 
 class GameWrapper {
 protected:

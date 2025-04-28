@@ -22,8 +22,8 @@ public:
     }
 
     int get_winner(GameMessage* game_msg, GameMessage* opp_game_msg) override {
-        long move = game_msg->rps();
-        long opp_move = opp_game_msg->rps();
+        uint8_t move = game_msg->rps();
+        uint8_t opp_move = opp_game_msg->rps();
 
         if (move == opp_move) return 0;
 

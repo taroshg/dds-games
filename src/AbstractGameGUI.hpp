@@ -6,7 +6,7 @@
 
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
-#include "GameMessage.hpp"
+#include "./idl/GameMessage.hpp"
 
 enum
 {
