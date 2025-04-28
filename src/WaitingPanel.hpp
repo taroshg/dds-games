@@ -11,9 +11,10 @@ private:
     std::function<void(int)> setScreen_;
 public:
     WaitingPanel(wxFrame* parent, std::function<void(int)> setScreen): wxPanel(parent, wxID_ANY) {
-        this->SetBackgroundColour(*wxBLACK);
+        this->SetBackgroundColour(wxColour(0, 0, 0, 150));
         wxBoxSizer* waiting_sizer = new wxBoxSizer(wxVERTICAL);
         waiting_text_ = new wxStaticText(this, wxID_ANY, "Waiting for selection...");
+        waiting_text_->SetForegroundColour(*wxWHITE);
         waiting_sizer->AddStretchSpacer();
         waiting_sizer->Add(waiting_text_, 0, wxALIGN_CENTER | wxALL, 20);
         waiting_sizer->AddStretchSpacer();
@@ -21,9 +22,6 @@ public:
         this->Layout();
 
         this->setScreen_ = setScreen;
-
-        // wxButton* HOME_BTN = new wxButton(this, wxID_ANY, "back", wxDefaultPosition);
-        // HOME_BTN->Bind(wxEVT_BUTTON, &WaitingPanel::onHomeButtonPress, this);
     }
     ~WaitingPanel() {}
 
@@ -35,7 +33,6 @@ public:
     void onHomeButtonPress(wxCommandEvent& evt){
         this->setScreen_(0);
     }
-
 };
 
 #endif

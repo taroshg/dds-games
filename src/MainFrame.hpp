@@ -17,6 +17,8 @@
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
 
+int OPP_JOIN_WAIT = 10;
+
 class MainFrame : public wxFrame
 {
 private:
@@ -29,6 +31,9 @@ private:
     wxBoxSizer* frameSizer;
 
     GameUser* game_user_;
+
+    bool initalized_;
+
 public:
     MainFrame(): wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
     {
@@ -63,10 +68,32 @@ public:
         waiting_panel_->Text("waiting for people to join...");
         waiting_panel_->Show();
 
+        initalized_ = false;
+
+        // updates waiting panel to show how many seconds we are waiting for
+        std::thread([this](){
+            auto start = std::chrono::steady_clock::now();
+            while(!initalized_){
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                std::stringstream ss;
+                
+                auto timer = (std::chrono::steady_clock::now() - start);
+                int seconds = std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+    
+                ss << "waiting for opp to join (" << seconds << " seconds)";
+                waiting_panel_->Text(ss.str());
+    
+                wxTheApp->CallAfter([this](){
+                    Refresh();
+                });
+            }
+        }).detach();
+
         // starts a thread for the initialization of game_user
         std::thread([this]() {
-            game_user_->init();
-            
+            initalized_ = game_user_->init();
+
             // Return to GUI thread to continue
             wxTheApp->CallAfter([this]() {
                 // if you are first to join show game selection panel
@@ -79,6 +106,7 @@ public:
         }).detach();
 
         Bind(wxEVT_MENU, &MainFrame::OnExit, this, wxID_EXIT);
+        
     }
 
     void setScreen(int screen_id){
@@ -94,6 +122,7 @@ public:
         // update game_user screen, which broadcasts your current screen to everyone
         game_user_->setScreen(screen_id);
 
+
         if(screen_id == SCREEN_GAME_SELECTION) {
             game_selection_panel_->Show();
             Layout();
@@ -106,18 +135,42 @@ public:
             Layout();
             
             std::thread([this]() {
-                while(game_user_->readOppGameChoice() != SCREEN_RPS)
+                auto start = std::chrono::steady_clock::now();
+                auto end = start + std::chrono::seconds(OPP_JOIN_WAIT);
+
+                while(game_user_->readOppGameChoice() != SCREEN_RPS && std::chrono::steady_clock::now() < end){
                     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                    std::stringstream ss;
+                    
+                    auto timer = (std::chrono::steady_clock::now() - start);
+                    int seconds = OPP_JOIN_WAIT - std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+
+                    ss << "waiting for opp (" << seconds << " seconds)";
+                    waiting_panel_->Text(ss.str());
+
+                    wxTheApp->CallAfter([this](){
+                        Refresh();
+                    });
+                }
+                    
+
+                if (std::chrono::steady_clock::now() < end){
+                    wxTheApp->CallAfter([this](){
+                        waiting_panel_->Hide();
+                        rps_panel_->setOppActive(true);
+                        rps_panel_->Show();
+                        rps_panel_->updateDisplay();
+                        Layout();
+                        if (!game_user_->first_)
+                            rps_panel_->waitingMoveEnter();                     
+                    });
+                }
+                else {
+                    setScreen(0);
+                    SetStatusText("waiting for opp rock-paper-scissors, timed out!");
+                }
                 
-                wxTheApp->CallAfter([this](){
-                    waiting_panel_->Hide();
-                    rps_panel_->setOppActive(true);
-                    rps_panel_->Show();
-                    ttt_panel_->updateDisplay();
-                    Layout();
-                    if (!game_user_->first_)
-                        rps_panel_->waitingMoveEnter();                     
-                });
             }).detach();
 
             return;
@@ -128,17 +181,42 @@ public:
             Layout();
             
             std::thread([this]() {
-                while(game_user_->readOppGameChoice() != SCREEN_TTT)
+                auto start = std::chrono::steady_clock::now();
+                auto end = start + std::chrono::seconds(OPP_JOIN_WAIT);
+
+                while(game_user_->readOppGameChoice() != SCREEN_TTT && std::chrono::steady_clock::now() < end){
                     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                    std::stringstream ss;
+                    
+                    auto timer = (std::chrono::steady_clock::now() - start);
+                    int seconds = OPP_JOIN_WAIT - std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+
+                    ss << "waiting for opp (" << seconds << " seconds)";
+                    waiting_panel_->Text(ss.str());
+
+                    wxTheApp->CallAfter([this](){
+                        Refresh();
+                    });
+                    
+                }
+                    
                 
-                wxTheApp->CallAfter([this](){
-                    waiting_panel_->Hide();
-                    ttt_panel_->setOppActive(true);
-                    ttt_panel_->Show();
-                    Layout();
-                    if (!game_user_->first_)
-                        ttt_panel_->waitingMoveEnter();                     
-                });
+                if (std::chrono::steady_clock::now() < end){
+                    wxTheApp->CallAfter([this](){
+                        waiting_panel_->Hide();
+                        ttt_panel_->setOppActive(true);
+                        ttt_panel_->Show();
+                        Layout();
+                        if (!game_user_->first_)
+                            ttt_panel_->waitingMoveEnter();                     
+                    });
+                }
+                else {
+                    setScreen(0);
+                    SetStatusText("waiting for opp in tic-tac-toe, timed out!");
+                }
+
             }).detach();
 
             return;
@@ -149,17 +227,40 @@ public:
             Layout();
             
             std::thread([this]() {
-                while(game_user_->readOppGameChoice() != SCREEN_C4)
+                auto start = std::chrono::steady_clock::now();
+                auto end = start + std::chrono::seconds(OPP_JOIN_WAIT);
+
+                while(game_user_->readOppGameChoice() != SCREEN_C4 && std::chrono::steady_clock::now() < end){
                     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    
+                    std::stringstream ss;
+                    
+                    auto timer = (std::chrono::steady_clock::now() - start);
+                    int seconds = OPP_JOIN_WAIT - std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+
+                    ss << "waiting for opp (" << seconds << " seconds)";
+                    waiting_panel_->Text(ss.str());
+
+                    wxTheApp->CallAfter([this](){
+                        Refresh();
+                    });
+                }
                 
-                wxTheApp->CallAfter([this](){
-                    waiting_panel_->Hide();
-                    c4_panel_->setOppActive(true);
-                    c4_panel_->Show();
-                    Layout();
-                    if (!game_user_->first_)
-                        c4_panel_->waitingMoveEnter();                     
-                });
+                if (std::chrono::steady_clock::now() < end){
+                    wxTheApp->CallAfter([this](){
+                        waiting_panel_->Hide();
+                        c4_panel_->setOppActive(true);
+                        c4_panel_->Show();
+                        Layout();
+                        if (!game_user_->first_)
+                            c4_panel_->waitingMoveEnter();                     
+                    });
+                }
+                else {
+                    setScreen(0);
+                    SetStatusText("waiting for opp in connect4, timed out!");
+                }
+
             }).detach();
 
             return;
