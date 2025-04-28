@@ -130,7 +130,7 @@ public:
             else if (turn_){
                 my_game_msg->uid(uid_);
 
-                game_api_->get_user_move(my_game_msg, opp_game_msg);
+                game_api_->get_user_move_CLI(my_game_msg, opp_game_msg);
                 game_api_->I_moved();
 
                 // publish my move

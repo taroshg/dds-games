@@ -4,7 +4,7 @@
 class RPS : public GameWrapper {
 public:
     RPS(): GameWrapper() {};
-    void get_user_move(GameMessage* game_msg, GameMessage* opp_game_msg) override {
+    void get_user_move_CLI(GameMessage* game_msg, GameMessage* opp_game_msg) override {
         char move;
         do {
             std::cout << "'r' for rock\n";

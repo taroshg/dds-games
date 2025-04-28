@@ -13,6 +13,7 @@ enum
     SCREEN_GAME_SELECTION = 0,
     SCREEN_RPS = 1,
     SCREEN_TTT = 2,
+    SCREEN_C4 = 3,
 };
 
 class AbstractGamePanel : public wxPanel 
@@ -37,7 +38,6 @@ public:
     virtual std::string getFrameStatusText() = 0;
     virtual void updateDisplay() = 0;
     virtual void setupGame() = 0;
-    
 
     AbstractGamePanel(wxFrame* parent, WaitingPanel* waitingPanel, std::function<void(int)> setScreen, GameUser* game_user) : 
         wxPanel(parent, wxID_ANY),
@@ -53,18 +53,6 @@ public:
     }
 
     ~AbstractGamePanel() {}
-
-    // Note: make sure the that opp_msg_ is updated before calling this
-    bool oppActive(){
-        if (opp_msg_->game_id() == GAME_ID) return true;
-
-        setupGame();
-
-        std::cout << "opp not in game" << std::endl;
-        wxMessageBox("opp not in game");
-
-        return false;
-    }
 
     void setOppActive(bool active){
         is_opp_active_ = active;
@@ -102,14 +90,11 @@ public:
     }
 
     void goHome(){
-        // broadcast you have left the game!
-        my_msg_->game_id(0);
-        game_user_->sendGameMessage(my_msg_);
-
         // reset messages for next time
         my_msg_ = new GameMessage();
         opp_msg_ = new GameMessage();
 
+        // will broadcast you have left the game to everyone
         setScreen(SCREEN_GAME_SELECTION);
     }
 

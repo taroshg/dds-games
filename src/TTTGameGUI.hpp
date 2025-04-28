@@ -89,8 +89,10 @@ public:
         if(game_user_->messageAvailable()){
             opp_msg_ = game_user_->readGameMessage();
 
+            // if opp left the game here!!!
             if (opp_msg_->message() == "screen selection" && opp_msg_->game_id() != GAME_ID){
                 std::cout << "opp left the game" << std::endl;
+                setFrameStatusText("opp left the game");
                 setupGame();
                 setOppActive(false);
                 return;
