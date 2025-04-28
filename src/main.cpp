@@ -1,17 +1,12 @@
-#include <wx/wxprec.h>
- 
-#ifndef WX_PRECOMP
-    #include <wx/wx.h>
-#endif
-
 #include "GameUser.hpp"
-#include "./games/ttt/ttt.hpp"
+#include "./games/ttt.hpp"
+#include "./games/rps.hpp"
+#include "./games/c4.hpp"
 
 int main(){
-    GameWrapper* rps = new RPS();
-    GameWrapper* ttt = new TTT();
+    GameWrapper* c4 = new C4();
     GameUser* user = new GameUser();
     if(user->init()){
-        user->playCLI(rps, 3);
+        user->playCLI(c4, 3);
     }
 }

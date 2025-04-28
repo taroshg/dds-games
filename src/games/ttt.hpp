@@ -1,4 +1,4 @@
-#include "../GameWrapper.hpp"
+#include "GameWrapper.hpp"
 #include <iostream>
 #include <bitset>
 
@@ -20,7 +20,7 @@ public:
 
     ~TTT(){}
 
-    void get_user_move(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
+    void get_user_move_CLI(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
         int move; // pos of square marked
         unsigned long my_ttt = my_game_msg->ttt();
         unsigned long opp_ttt = opp_game_msg->ttt();

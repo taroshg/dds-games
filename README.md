@@ -40,3 +40,9 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=~/Fast-DDS/install -DBUILD_SHARED_LIBS=ON
 cmake --build .
 ```
+
+### if install FASTDDS global
+```
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/fastdds -DBUILD_SHARED_LIBS=ON 
+cmake --build .
+```

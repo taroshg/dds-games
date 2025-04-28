@@ -3,7 +3,6 @@
 
 #include "DDSGameController.hpp"
 #include "./games/GameWrapper.hpp"
-#include "./games/rps/rps.hpp"
 
 #include <thread>
 #include <chrono>
@@ -12,7 +11,7 @@ class GameUser{
 private:
     unsigned long last_message_count_; // used to keep track of when to read
     DDSGameController my_controller_;
-    int current_game_id_ = -1; // -1 for when no game is selected
+    int current_screen_id_ = -1; // -1 for when no game is selected
 
 public:
     std::string uid_; // my ID
@@ -69,37 +68,32 @@ public:
         }
         return false;
     }
+    int currentScreenID(){
+        return current_screen_id_;
+    }
 
-    bool selectGame(int game_id){
+    bool setScreen(int screen_id){
         GameMessage* msg = new GameMessage();
-        msg->game_id(game_id);
-        msg->message("game selection");
+        msg->uid(uid_);
+        msg->game_id(screen_id);
+        msg->message("screen selection");
+
         if (my_controller_.publish(msg)){
-            last_message_count_++;
-            current_game_id_ = game_id;
+            current_screen_id_ = screen_id;
             return true;
-        }
+        } 
+
         std::cout << "unable to publish game selection" << std::endl;
         return false;
     }
 
-    int currentGameID(){
-        return current_game_id_;
-    }
-
-    bool hasReceivedGameChoice(){
-        if (current_game_id_ > 0) return true;
-        // check the last message's game_id
-        // Note: if a third player were to join, then they would be eaves drop, and join game in the middle
-        if (my_controller_.message_count() > last_message_count_){
+    int readOppGameChoice(){
+        if (messageAvailable()){
             GameMessage* opp_msg = my_controller_.read();
             last_message_count_ = my_controller_.message_count(); 
-
-            current_game_id_ = opp_msg->game_id();
-            std::cout << "running game_id: " << current_game_id_ << std::endl;
-            return true;
+            return opp_msg->game_id();
         }
-        return false;
+        return -1;
     }
 
     void playCLI(GameWrapper* game_api_, int nrounds){
@@ -136,7 +130,7 @@ public:
             else if (turn_){
                 my_game_msg->uid(uid_);
 
-                game_api_->get_user_move(my_game_msg, opp_game_msg);
+                game_api_->get_user_move_CLI(my_game_msg, opp_game_msg);
                 game_api_->I_moved();
 
                 // publish my move
@@ -166,6 +160,7 @@ public:
 
     bool sendGameMessage(GameMessage* msg){
         msg->uid(uid_);
+        msg->message("game state message");
         if (my_controller_.publish(msg)){
             turn_ = false;
             return true;
@@ -184,5 +179,6 @@ public:
         }
         return nullptr;
     }
+
 };
 #endif
