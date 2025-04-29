@@ -274,7 +274,7 @@ private:
         wxBitmap rockButtonImage;
         rockButtonImage.LoadFile(wxT("./resources/rock.png"), wxBITMAP_TYPE_PNG);
         wxBitmap xButtonImage;
-        xButtonImage.LoadFile(wxT("./resources/X@0,25x.png"), wxBITMAP_TYPE_PNG);
+        xButtonImage.LoadFile(wxT("./resources/TTTlogo.png"), wxBITMAP_TYPE_PNG);
         wxBitmap rButtonImage;
         rButtonImage.LoadFile(wxT("./resources/red_dot.png"), wxBITMAP_TYPE_PNG);
         wxSize buttonTileSize = wxSize(100,100);

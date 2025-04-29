@@ -14,8 +14,7 @@
 
 #include "AbstractGameGUI.hpp"
 
-class TTTGameGUI : public AbstractGamePanel 
-{
+class TTTGameGUI : public AbstractGamePanel {
 public:
     const uint8_t GAME_ID = 2;
     TTTGameGUI(wxFrame* parent, WaitingPanel* waitingPanel, std::function<void(int)> setScreen, GameUser* game_user)
@@ -150,29 +149,33 @@ private:
     void setupTTTDisplay(){
         int scaleFactor = 1;
 
-        buttonTileSize = wxSize(100,100);
+        buttonTileSize = wxSize(100, 100);
         wxImage blankImage(buttonTileSize.GetWidth(), buttonTileSize.GetHeight());
         blankImage.SetRGB(wxRect(0, 0, buttonTileSize.GetWidth(), buttonTileSize.GetHeight()), 255, 255, 255);
         blankButtonImage = wxBitmap(blankImage);
-    
-        if (scaleFactor > 3) {
-            xButtonImage.LoadFile(wxT("./resources/X.png"), wxBITMAP_TYPE_PNG);
-            oButtonImage.LoadFile(wxT("./resources/O.png"), wxBITMAP_TYPE_PNG);
-            buttonTileSize = wxSize(200,200);
+
+        if (scaleFactor > 3)
+        {
+            xButtonImage.LoadFile(wxT("./resources/letter.png"), wxBITMAP_TYPE_PNG);
+            oButtonImage.LoadFile(wxT("./resources/CircleOut.png"), wxBITMAP_TYPE_PNG);
+            buttonTileSize = wxSize(200, 200);
         }
-        else if (scaleFactor > 2) {
-            xButtonImage.LoadFile(wxT("./resources/X@0,75x.png"), wxBITMAP_TYPE_PNG);
-            oButtonImage.LoadFile(wxT("./resources/O@0,75x.png"), wxBITMAP_TYPE_PNG);
-            buttonTileSize = wxSize(150,150);
+        else if (scaleFactor > 2)
+        {
+            xButtonImage.LoadFile(wxT("./resources/letter.png"), wxBITMAP_TYPE_PNG);
+            oButtonImage.LoadFile(wxT("./resources/CircleOut.png"), wxBITMAP_TYPE_PNG);
+            buttonTileSize = wxSize(150, 150);
         }
-        else if (scaleFactor > 1) {
-            xButtonImage.LoadFile(wxT("./resources/X@0,5x.png"), wxBITMAP_TYPE_PNG);
-            oButtonImage.LoadFile(wxT("./resources/O@0,5x.png"), wxBITMAP_TYPE_PNG);
-            buttonTileSize = wxSize(125,125);
+        else if (scaleFactor > 1)
+        {
+            xButtonImage.LoadFile(wxT("./resources/letter.png"), wxBITMAP_TYPE_PNG);
+            oButtonImage.LoadFile(wxT("./resources/CircleOut.png"), wxBITMAP_TYPE_PNG);
+            buttonTileSize = wxSize(125, 125);
         }
-        else {
-            xButtonImage.LoadFile(wxT("./resources/X@0,25x.png"), wxBITMAP_TYPE_PNG);
-            oButtonImage.LoadFile(wxT("./resources/O@0,25x.png"), wxBITMAP_TYPE_PNG);
+        else
+        {
+            xButtonImage.LoadFile(wxT("./resources/letter.png"), wxBITMAP_TYPE_PNG);
+            oButtonImage.LoadFile(wxT("./resources/CircleOut.png"), wxBITMAP_TYPE_PNG);
         }
     }
 };
