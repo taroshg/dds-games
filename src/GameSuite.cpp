@@ -25,28 +25,28 @@ class MyFrame : public wxFrame
 {
 public:
     MyFrame();
- 
+
 private:
     void setupWaitingDisplay();
-    void OnWaitingTimerComplete(wxTimerEvent& event);
+    void OnWaitingTimerComplete(wxTimerEvent &event);
     void setupGameSelection();
-    void selectionButtonClick(wxCommandEvent& event);
+    void selectionButtonClick(wxCommandEvent &event);
     void setGame(int game_id);
-    void OnExit(wxCommandEvent& event);
-    
-    AbstractGame* ttt_panel_;
-    AbstractGame* rps_panel_;
-    AbstractGame* current_panel_;
+    void OnExit(wxCommandEvent &event);
 
-    wxPanel* waiting_panel_;
-    wxStaticText* waitingText_;
+    AbstractGame *ttt_panel_;
+    AbstractGame *rps_panel_;
+    AbstractGame *current_panel_;
 
-    wxPanel* game_selection_panel_;
-    wxBoxSizer* frameSizer;
-    wxTimer* timer;
+    wxPanel *waiting_panel_;
+    wxStaticText *waitingText_;
+
+    wxPanel *game_selection_panel_;
+    wxBoxSizer *frameSizer;
+    wxTimer *timer;
     int currentGame;
 
-    GameUser* game_user_;
+    GameUser *game_user_;
 };
 
 bool MyApp::OnInit()
@@ -64,12 +64,12 @@ enum
 };
 
 MyFrame::MyFrame()
-: wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
+    : wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
 {
     timer = new wxTimer(this, wxID_ANY);
     Bind(wxEVT_TIMER, &MyFrame::OnWaitingTimerComplete, this, timer->GetId());
     CreateStatusBar();
-    
+
     waiting_panel_ = new wxPanel(this);
     waitingText_ = new wxStaticText(waiting_panel_, wxID_ANY, "Waiting On Response from other player");
     setupWaitingDisplay();
@@ -78,10 +78,10 @@ MyFrame::MyFrame()
     setupGameSelection();
 
     game_user_ = new GameUser();
-    
+
     ttt_panel_ = new TTTGameGUI(this, waiting_panel_, timer, game_user_);
     rps_panel_ = new RPSGameGUI(this, waiting_panel_, timer, game_user_, 3);
-    
+
     waiting_panel_->Hide();
     game_selection_panel_->Hide();
     ttt_panel_->Hide();
@@ -99,11 +99,13 @@ MyFrame::MyFrame()
     waiting_panel_->Show();
 
     // starts a thread for the initialization of game_user
-    std::thread([this]() {
-        game_user_->init();
-        
-        // Return to GUI thread to continue
-        wxTheApp->CallAfter([this]() {
+    std::thread([this]()
+                {
+                    game_user_->init();
+
+                    // Return to GUI thread to continue
+                    wxTheApp->CallAfter([this]()
+                                        {
             // if you are first to join show game selection panel
             if (game_user_->first_){
                 waiting_panel_->Hide();
@@ -127,69 +129,76 @@ MyFrame::MyFrame()
     
                 }).detach();
             }
-            Layout();
-        });
-    
-    }).detach();
+            Layout(); });
+                })
+        .detach();
 
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 }
 
-void MyFrame::setupGameSelection(){
-    wxGridSizer* gridSizer = new wxGridSizer(1, 2, 5, 5); // 3 rows, 3 columns, 5px padding
+void MyFrame::setupGameSelection()
+{
+    wxGridSizer *gridSizer = new wxGridSizer(1, 2, 5, 5); // 3 rows, 3 columns, 5px padding
 
     wxBitmap rockButtonImage;
     rockButtonImage.LoadFile(wxT("./resources/rock.png"), wxBITMAP_TYPE_PNG);
     wxBitmap xButtonImage;
-    xButtonImage.LoadFile(wxT("./resources/X@0,25x.png"), wxBITMAP_TYPE_PNG);
-    wxSize buttonTileSize = wxSize(100,100);
+    xButtonImage.LoadFile(wxT("./resources/TTTlogo.png"), wxBITMAP_TYPE_PNG);
+    wxSize buttonTileSize = wxSize(100, 100);
 
-    wxBitmapButton* RPS = new wxBitmapButton(game_selection_panel_, 201, rockButtonImage, wxDefaultPosition, buttonTileSize);
+    wxBitmapButton *RPS = new wxBitmapButton(game_selection_panel_, 201, rockButtonImage, wxDefaultPosition, buttonTileSize);
     RPS->Bind(wxEVT_BUTTON, &MyFrame::selectionButtonClick, this);
-    wxBitmapButton* TTT = new wxBitmapButton(game_selection_panel_, 202, xButtonImage, wxDefaultPosition, buttonTileSize);
+    wxBitmapButton *TTT = new wxBitmapButton(game_selection_panel_, 202, xButtonImage, wxDefaultPosition, buttonTileSize);
     TTT->Bind(wxEVT_BUTTON, &MyFrame::selectionButtonClick, this);
 
-    gridSizer->Add(RPS, 0, wxALIGN_CENTER , 5);
-    gridSizer->Add(TTT, 0, wxALIGN_CENTER , 5);
+    gridSizer->Add(RPS, 0, wxALIGN_CENTER, 5);
+    gridSizer->Add(TTT, 0, wxALIGN_CENTER, 5);
 
     // Wrap gridSizer inside a box sizer to center it
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    wxStaticText* infoText = new wxStaticText(game_selection_panel_, wxID_ANY, "Choose a game");
+    wxStaticText *infoText = new wxStaticText(game_selection_panel_, wxID_ANY, "Choose a game");
     infoText->SetFont(wxFontInfo(12).Bold());
     mainSizer->Add(infoText, 0, wxALIGN_CENTER | wxTOP, 20); // Centers grid
 
-    mainSizer->AddStretchSpacer(); // Pushes content down
+    mainSizer->AddStretchSpacer();                            // Pushes content down
     mainSizer->Add(gridSizer, 0, wxALIGN_CENTER | wxALL, 20); // Centers grid
-    mainSizer->AddStretchSpacer(); // Pushes content up
+    mainSizer->AddStretchSpacer();                            // Pushes content up
 
     game_selection_panel_->SetSizer(mainSizer);
     game_selection_panel_->Layout();
 }
 
-void MyFrame::selectionButtonClick(wxCommandEvent& event) {
-    int game_id = event.GetId()-200;
+void MyFrame::selectionButtonClick(wxCommandEvent &event)
+{
+    int game_id = event.GetId() - 200;
     // will publish the selection and then move to next screen
-    if (game_user_->selectGame(game_id)){
+    if (game_user_->selectGame(game_id))
+    {
         setGame(game_id);
     }
     return;
 }
 
-void MyFrame::setGame(int game_id){
-    if (game_id == 1) current_panel_ = rps_panel_;
-    else if (game_id == 2) current_panel_ = ttt_panel_;
+void MyFrame::setGame(int game_id)
+{
+    if (game_id == 1)
+        current_panel_ = rps_panel_;
+    else if (game_id == 2)
+        current_panel_ = ttt_panel_;
     Layout();
     game_selection_panel_->Hide();
 
     waitingText_->SetLabel("waiting for opp...");
     //  if first, dont show waiting display, and show current game panel
-    if (game_user_->first_){
+    if (game_user_->first_)
+    {
         current_panel_->waitingDisplayExit();
         Layout();
-        
-    }// if your not first to move, you will wait
-    else{
+
+    } // if your not first to move, you will wait
+    else
+    {
         current_panel_->waitingDisplayEnter();
     }
 }
@@ -197,7 +206,7 @@ void MyFrame::setGame(int game_id){
 void MyFrame::setupWaitingDisplay()
 {
     waiting_panel_->SetBackgroundColour(*wxBLACK);
-    wxBoxSizer* waitingSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *waitingSizer = new wxBoxSizer(wxVERTICAL);
 
     // Center the text horizontally
     waitingSizer->AddStretchSpacer(); // Pushes content down
@@ -208,13 +217,13 @@ void MyFrame::setupWaitingDisplay()
     waiting_panel_->Layout();
 }
 
-void MyFrame::OnWaitingTimerComplete(wxTimerEvent& event)
+void MyFrame::OnWaitingTimerComplete(wxTimerEvent &event)
 {
     current_panel_->waitingDisplayExit();
     Layout();
 }
 
-void MyFrame::OnExit(wxCommandEvent& event)
+void MyFrame::OnExit(wxCommandEvent &event)
 {
     ttt_panel_->Hide();
     waiting_panel_->Hide();
