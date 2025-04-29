@@ -146,12 +146,12 @@ public:
         for (int i = 0; i < 42; i++)
         {   
             // if my marker is at i
-            if(c4.myState() & (1UL << i)){
+            if(c4.myState() & (1ULL << i)){
                 buttons[i]->SetBitmap(myMarker);
             }
             
             // if opp marker is at i
-            else if(c4.oppState() & (1UL << i)){
+            else if(c4.oppState() & (1ULL << i)){
                 buttons[i]->SetBitmap(oppMarker);
             }
     

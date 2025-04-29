@@ -38,12 +38,12 @@ public:
 
     bool make_move(int col){
         int top_bit = 5 * 7 + col;
-        if (occupied() & (1UL << top_bit)) return false;
+        if (occupied() & (1ULL << top_bit)) return false;
 
         for (int row = 0; row < 6; ++row){
             int bit = row * 7 + col;
-            if(free() & (1UL << bit)){
-                my_board = (my_board | (1UL << bit));
+            if(free() & (1ULL << bit)){
+                my_board = (my_board | (1ULL << bit));
                 return true;
             }
         }
@@ -60,9 +60,9 @@ public:
         for (int r = 5; r >= 0; --r){
             for (int c = 0; c < 7; ++c){
                 int bit = r * 7 + c;
-                if (my_board & (1UL << bit))
+                if (my_board & (1ULL << bit))
                     out << mychar;
-                else if (opp_board & (1UL << bit))
+                else if (opp_board & (1ULL << bit))
                     out << oppchar;
                 else
                     out << '.';
@@ -79,7 +79,7 @@ public:
     }
 
     unsigned long free(){
-        return (~occupied()) & (1UL << 42) - 1;
+        return (~occupied()) & (1ULL << 42) - 1;
     }
 
     unsigned long myState(){
@@ -122,7 +122,7 @@ public:
     }
 
     bool is_end(GameMessage* game_msg, GameMessage* opp_game_msg) override{
-        //  (42 bits set to 1) = (0x3FFFFFFFFFF) = (1UL << 42) - 1
+        //  (42 bits set to 1) = (0x3FFFFFFFFFF) = (1ULL << 42) - 1
         int winner = get_winner(game_msg, opp_game_msg);
         // if there is no winner and the board is filled
         if (winner != 0) 
