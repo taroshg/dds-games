@@ -48,11 +48,4 @@ Makefile
 *.gcov
 
 ./build
-build/resources/X@0,75x.png
-build/resources/X@0,5x.png
-build/resources/X@0,25x.png
-build/resources/X.png
-build/resources/O@0,75x.png
-build/resources/O@0,5x.png
-build/resources/O@0,25x.png
-build/resources/O.png
+!build/resources

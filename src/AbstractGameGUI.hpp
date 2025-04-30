@@ -2,6 +2,7 @@
 #define ABSTRACTGAMEGUI_HPP
 
 #include <wx/wx.h>
+
 #include <string.h>
 
 #include "GameUser.hpp"
@@ -26,6 +27,7 @@ protected:
     WaitingPanel* waiting_panel_;
     wxFrame* parentFrame;
     wxPanel* home_panel_;
+    wxButton* back_btn_;
     std::function<void(int)> setScreen;
     int GAME_ID;
 
@@ -56,8 +58,8 @@ public:
         setScreen(setScreen),
         parentFrame(parent)
     {
-        wxButton* HOME_BTN = new wxButton(this, wxID_ANY, "back", wxDefaultPosition);
-        HOME_BTN->Bind(wxEVT_BUTTON, &AbstractGamePanel::onHomeButtonPress, this);
+        back_btn_ = new wxButton(this, wxID_ANY, "back", wxDefaultPosition);
+        back_btn_->Bind(wxEVT_BUTTON, &AbstractGamePanel::onHomeButtonPress, this);
         Bind(wxEVT_SIZE, &AbstractGamePanel::OnResize, this);
     }
 
@@ -67,13 +69,19 @@ public:
         is_opp_active_ = active;
     }
 
+    void setInteractive(bool enable){
+        wxWindowList children = GetChildren();
+        for (wxWindowList::iterator it = children.begin(); it != children.end(); ++it) {
+            if (*it != back_btn_) {
+                (*it)->Enable(enable);
+            }
+        }
+    }
+
     void waitingMoveEnter() {
-        Hide();
-        setFrameStatusText("Listening...");
-        waiting_panel_->Text("waiting for move..");
-        waiting_panel_->Show();
+        setFrameStatusText("waiting for move...");
+        setInteractive(false);
         parentFrame->Layout();
-    
         std::thread([this]() {
             while(!game_user_->messageAvailable())
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -86,9 +94,8 @@ public:
     }
 
     void waitingMoveExit() {
-        waiting_panel_->Hide();
+        setInteractive(true);
         setFrameStatusText(getFrameStatusText());
-        Show();
         parentFrame->Layout();
     }
 
