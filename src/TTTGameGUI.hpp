@@ -171,6 +171,8 @@ private:
     }
     void setupTTTDisplay()
     {
+        SetBackgroundColour(wxColour(0, 0, 0));
+
         int scaleFactor = 1;
 
         buttonTileSize = wxSize(100, 100);
