@@ -15,6 +15,7 @@ enum
     SCREEN_RPS = 1,
     SCREEN_TTT = 2,
     SCREEN_C4 = 3,
+    SCREEN_CHESS = 4,
 };
 
 class AbstractGamePanel : public wxPanel 
@@ -32,18 +33,9 @@ protected:
     int GAME_ID;
 
     bool is_opp_active_;
-
-    void OnResize(wxSizeEvent& event) {
-        if (waiting_panel_) {
-            waiting_panel_->SetSize(GetSize());  // Always stretch the waiting panel to cover the game
-            waiting_panel_->Raise();              // Make sure it stays above
-        }
-        event.Skip(); // Let other things process resize
-    }
-
+    bool interactionEnabled = true;
 public:
 
-    virtual void gameButtonClick(wxCommandEvent& event) = 0;
     virtual bool determineWinner() = 0;
     virtual std::string getFrameStatusText() = 0;
     virtual void updateDisplay() = 0;
@@ -60,7 +52,6 @@ public:
     {
         back_btn_ = new wxButton(this, wxID_ANY, "back", wxDefaultPosition);
         back_btn_->Bind(wxEVT_BUTTON, &AbstractGamePanel::onHomeButtonPress, this);
-        Bind(wxEVT_SIZE, &AbstractGamePanel::OnResize, this);
     }
 
     ~AbstractGamePanel() {}
@@ -70,6 +61,7 @@ public:
     }
 
     void setInteractive(bool enable){
+        interactionEnabled = enable;
         wxWindowList children = GetChildren();
         for (wxWindowList::iterator it = children.begin(); it != children.end(); ++it) {
             if (*it != back_btn_) {

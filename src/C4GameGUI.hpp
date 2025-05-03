@@ -82,7 +82,7 @@ public:
     }
     ~C4GameGUI() {};
 
-    void gameButtonClick(wxCommandEvent& event) override{
+    void gameButtonClick(wxCommandEvent& event){
         if (!is_opp_active_) return;
 
         int pos = event.GetId() % 7;

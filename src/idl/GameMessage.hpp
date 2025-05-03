@@ -94,6 +94,12 @@ public:
 
                     m_c4 = x.m_c4;
 
+                    m_chess_from = x.m_chess_from;
+
+                    m_chess_to = x.m_chess_to;
+
+                    m_chess_prom = x.m_chess_prom;
+
                     m_message = x.m_message;
 
     }
@@ -112,6 +118,9 @@ public:
         m_rps = x.m_rps;
         m_ttt = x.m_ttt;
         m_c4 = x.m_c4;
+        m_chess_from = x.m_chess_from;
+        m_chess_to = x.m_chess_to;
+        m_chess_prom = x.m_chess_prom;
         m_message = std::move(x.m_message);
     }
 
@@ -137,6 +146,12 @@ public:
 
                     m_c4 = x.m_c4;
 
+                    m_chess_from = x.m_chess_from;
+
+                    m_chess_to = x.m_chess_to;
+
+                    m_chess_prom = x.m_chess_prom;
+
                     m_message = x.m_message;
 
         return *this;
@@ -157,6 +172,9 @@ public:
         m_rps = x.m_rps;
         m_ttt = x.m_ttt;
         m_c4 = x.m_c4;
+        m_chess_from = x.m_chess_from;
+        m_chess_to = x.m_chess_to;
+        m_chess_prom = x.m_chess_prom;
         m_message = std::move(x.m_message);
         return *this;
     }
@@ -175,6 +193,9 @@ public:
            m_rps == x.m_rps &&
            m_ttt == x.m_ttt &&
            m_c4 == x.m_c4 &&
+           m_chess_from == x.m_chess_from &&
+           m_chess_to == x.m_chess_to &&
+           m_chess_prom == x.m_chess_prom &&
            m_message == x.m_message);
     }
 
@@ -412,6 +433,93 @@ public:
 
 
     /*!
+     * @brief This function sets a value in member chess_from
+     * @param _chess_from New value for member chess_from
+     */
+    eProsima_user_DllExport void chess_from(
+            uint8_t _chess_from)
+    {
+        m_chess_from = _chess_from;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_from
+     * @return Value of member chess_from
+     */
+    eProsima_user_DllExport uint8_t chess_from() const
+    {
+        return m_chess_from;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_from
+     * @return Reference to member chess_from
+     */
+    eProsima_user_DllExport uint8_t& chess_from()
+    {
+        return m_chess_from;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member chess_to
+     * @param _chess_to New value for member chess_to
+     */
+    eProsima_user_DllExport void chess_to(
+            uint8_t _chess_to)
+    {
+        m_chess_to = _chess_to;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_to
+     * @return Value of member chess_to
+     */
+    eProsima_user_DllExport uint8_t chess_to() const
+    {
+        return m_chess_to;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_to
+     * @return Reference to member chess_to
+     */
+    eProsima_user_DllExport uint8_t& chess_to()
+    {
+        return m_chess_to;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member chess_prom
+     * @param _chess_prom New value for member chess_prom
+     */
+    eProsima_user_DllExport void chess_prom(
+            uint8_t _chess_prom)
+    {
+        m_chess_prom = _chess_prom;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_prom
+     * @return Value of member chess_prom
+     */
+    eProsima_user_DllExport uint8_t chess_prom() const
+    {
+        return m_chess_prom;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_prom
+     * @return Reference to member chess_prom
+     */
+    eProsima_user_DllExport uint8_t& chess_prom()
+    {
+        return m_chess_prom;
+    }
+
+
+    /*!
      * @brief This function copies the value in member message
      * @param _message New value to be copied in member message
      */
@@ -460,6 +568,9 @@ private:
     uint8_t m_rps{0};
     uint32_t m_ttt{0};
     uint64_t m_c4{0};
+    uint8_t m_chess_from{0};
+    uint8_t m_chess_to{0};
+    uint8_t m_chess_prom{0};
     std::string m_message;
 
 };

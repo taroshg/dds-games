@@ -13,6 +13,8 @@ private:
     DDSGameController my_controller_;
     int current_screen_id_ = -1; // -1 for when no game is selected
 
+    // TODO: ADD username string 
+
 public:
     std::string uid_; // my ID
     std::string oid_; // opponent ID
