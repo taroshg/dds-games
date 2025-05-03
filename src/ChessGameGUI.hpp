@@ -13,12 +13,12 @@
 #include "AbstractGameGUI.hpp"
 
 uint8_t SQR_SIZE = 40;
-
+uint8_t SPRITE_SIZE = 25;
 struct ChessPiece {
     // lower case letter is black piece, and upper case is white
     char piece; // p (black pawn), P (white pawn), r (black rook), R (white rook)
     int row, col;
-    wxBitmap bitmap;  // "♔", "♞", etc.
+    wxBitmap bitmap;
 
     wxString get_path() {
         wxString path;
@@ -43,7 +43,7 @@ struct ChessPiece {
         // creates a bitmap from the path with the correct size
         wxImage img(get_path(), wxBITMAP_TYPE_PNG);
         if (img.IsOk()) {
-            img.Rescale(SQR_SIZE, SQR_SIZE, wxIMAGE_QUALITY_HIGH);
+            img.Rescale(SPRITE_SIZE, SPRITE_SIZE, wxIMAGE_QUALITY_HIGH);
             bitmap = wxBitmap(img);
         } else {
             wxLogError("Failed to load image: %s", get_path().c_str());
@@ -57,7 +57,6 @@ class ChessGameGUI : public AbstractGamePanel
 private:
     std::vector<ChessPiece> pieces;
     ChessPiece* draggedPiece = nullptr;
-    wxPoint dragOffset;
 
     chess::Square from_sqr;
     chess::Square to_sqr;
@@ -65,6 +64,7 @@ private:
     chess::Board* board;
 
     void setupGame() override{
+        draggedPiece = nullptr;
         board = new chess::Board();
         my_msg_ = new GameMessage();
         my_msg_->game_id(GAME_ID);
@@ -81,6 +81,30 @@ private:
             case 'k': return chess::PieceGenType::KING;
         }
         return chess::PieceGenType::PAWN;
+    }
+
+    // converts A8 -> H1 to A1 -> H8 coords
+    chess::Square getSquare(int row, int col) {
+        if (game_user_->first_)
+            return chess::Square(((7 - row) * 8) + col);
+        else
+            return chess::Square((row * 8) + (7 - col));
+    }
+
+    wxPoint getPos(int row, int col) {
+        wxSize size = GetClientSize();
+        int xpad = (size.x - (SQR_SIZE * 8)) / 2;
+        int ypad = (size.y - (SQR_SIZE * 8)) / 2;
+        return wxPoint((col * SQR_SIZE) + xpad, (row * SQR_SIZE) + ypad);
+    }
+
+    wxPoint getBoardPos(wxPoint pos) {
+        wxSize size = GetClientSize();
+        int xpad = (size.x - (SQR_SIZE * 8)) / 2;
+        int ypad = (size.y - (SQR_SIZE * 8)) / 2;
+        pos.x -= xpad;
+        pos.y -= ypad;
+        return wxPoint(pos.x / SQR_SIZE, pos.y / SQR_SIZE);
     }
 
 public:
@@ -107,10 +131,10 @@ public:
             for (int col = 0; col < 8; ++col) {
                 wxColour color = (row + col) % 2 == 0 ? wxColor(119,149,85,255) : wxColor(236,236,209,255);
                 dc.SetBrush(wxBrush(color));
-                dc.DrawRectangle(col * SQR_SIZE, row * SQR_SIZE, SQR_SIZE, SQR_SIZE);
+                dc.DrawRectangle(getPos(row, col), wxSize(SQR_SIZE, SQR_SIZE));
 
                 // check for piece and place it
-                chess::Piece piece = board->at(chess::Square(((7 - row) * 8) + col));
+                chess::Piece piece = board->at(getSquare(row, col));
                 if (piece != chess::Piece::NONE){
                     pieces.emplace_back(row, col, std::string(piece)[0]);
                 }
@@ -120,32 +144,33 @@ public:
         // Draw pieces
         for (const auto& piece : pieces) {
             if (&piece == draggedPiece) continue;
-            wxPoint pos(piece.col * SQR_SIZE, piece.row * SQR_SIZE);
+            int diff = SQR_SIZE - SPRITE_SIZE;
+            wxPoint pos = getPos(piece.row, piece.col);
+            pos.x += diff / 2;
+            pos.y += diff / 2;
             dc.DrawBitmap(piece.bitmap, pos, true);
         }
 
         // Draw dragged piece following mouse
         if (draggedPiece) {
-            wxPoint mousePos = ScreenToClient(wxGetMousePosition()) - dragOffset;
+            wxPoint mousePos = ScreenToClient(wxGetMousePosition()) - wxPoint(SPRITE_SIZE / 2, SPRITE_SIZE / 2);
             dc.DrawBitmap(draggedPiece->bitmap, mousePos, true);
         }
     }
 
     void OnMouseDown(wxMouseEvent& event) {
         if (!is_opp_active_ || !interactionEnabled) return;
-
-        int col = event.GetX() / SQR_SIZE;
-        int row = event.GetY() / SQR_SIZE;
+        
+        // get col and row
+        wxPoint wxBoard = getBoardPos(event.GetPosition());
+        int col = wxBoard.x;
+        int row = wxBoard.y;
 
         // finds the piece and sets it to be draggable
         for (auto& piece : pieces) {
             if (piece.row == row && piece.col == col) {
                 draggedPiece = &piece;
-                dragOffset = event.GetPosition() - wxPoint(col * SQR_SIZE + 10, row * SQR_SIZE + 5);
-
-                // converts A8 -> H1 to A1 -> H8 coords
-                from_sqr = chess::Square(((7 - row) * 8) + col);
-
+                from_sqr = getSquare(row, col);
                 break;
             }
         }
@@ -159,10 +184,13 @@ public:
 
     void OnMouseUp(wxMouseEvent& event) {
         if (draggedPiece) {
-            int col = event.GetX() / SQR_SIZE;
-            int row = event.GetY() / SQR_SIZE;
+            // get col and row
+            wxPoint wxBoard = getBoardPos(event.GetPosition());
+            int col = wxBoard.x;
+            int row = wxBoard.y;
+
             // piece is dropped
-            to_sqr = chess::Square(((7 - row) * 8) + col);
+            to_sqr = getSquare(row, col);
 
             //check if move is legal
             chess::PieceGenType p = charToPieceGen(draggedPiece->piece);
@@ -202,6 +230,7 @@ public:
                 my_msg_->chess_to(to_sqr.index());
                 game_user_->sendGameMessage(my_msg_);
 
+                if (determineWinner()) return;
                 waitingMoveEnter();
             }
 
@@ -216,12 +245,22 @@ public:
     bool determineWinner() override{
         std::pair<chess::GameResultReason, chess::GameResult> result = board->isGameOver();
         if(chess::GameResultReason::NONE != result.first){
-            chess::GameResult winner = result.second;
+            chess::GameResult res = result.second;
+
+            if (res == chess::GameResult::DRAW) 
+                wxMessageBox("it is a draw!");
             
-            if (winner == chess::GameResult::WIN) wxMessageBox("You Win!!");
-            if (winner == chess::GameResult::LOSE) wxMessageBox("You Lose :(");
-            if (winner == chess::GameResult::DRAW) wxMessageBox("it is a draw!");
-    
+            if (!game_user_->first_)
+            {
+                if (res == chess::GameResult::WIN) wxMessageBox("you win!");
+                else if (res == chess::GameResult::LOSE) wxMessageBox("you lose!");
+            }
+            else
+            {
+                if (res == chess::GameResult::WIN) wxMessageBox("you lose!");
+                else if (res == chess::GameResult::LOSE) wxMessageBox("you win!");
+            }
+                
             setupGame();
             updateDisplay();
     
