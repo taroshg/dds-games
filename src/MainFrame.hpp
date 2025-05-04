@@ -282,7 +282,7 @@ public:
 private:
     void setupGameSelection()
     {
-        game_selection_panel_->SetBackgroundColour(*wxWHITE);
+        game_selection_panel_->SetBackgroundColour(wxColour(173, 216, 230)); // light blue
 
         // Main title
         wxStaticText *titleText = new wxStaticText(game_selection_panel_, wxID_ANY, "Welcome to the Game Lobby");

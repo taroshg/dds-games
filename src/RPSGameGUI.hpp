@@ -159,6 +159,13 @@ private:
                  (player1Choice == 'p' && player2Choice == 'r') ||
                  (player1Choice == 's' && player2Choice == 'p'))
         {
+            // Flash green background for win
+            SetBackgroundColour(wxColour(144, 238, 144)); // light green
+            Refresh();
+            wxMilliSleep(300);                            // short delay
+            SetBackgroundColour(wxColour(173, 216, 230)); // reset to original light blue
+            Refresh();
+
             wxMessageBox("you win the round!");
             player1Wins++;
         }
