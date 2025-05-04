@@ -17,6 +17,8 @@ public:
     std::string uid_; // my ID
     std::string oid_; // opponent ID
 
+    std::string username;
+
     bool turn_;
     bool first_;
     GameUser(): last_message_count_(0), 

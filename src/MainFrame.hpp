@@ -16,6 +16,7 @@
 #include "C4GameGUI.hpp"
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
+#include "UsernamePanel.hpp"
 
 int OPP_JOIN_WAIT = 10;
 
@@ -26,6 +27,7 @@ private:
     AbstractGamePanel* rps_panel_;
     AbstractGamePanel* c4_panel_;
     WaitingPanel* waiting_panel_;
+    UsernamePanel* username_panel_;
     wxPanel* game_selection_panel_;
 
     wxBoxSizer* frameSizer;
@@ -40,6 +42,7 @@ public:
         CreateStatusBar();
 
         waiting_panel_ = new WaitingPanel(this, [this](int screen_id){ setScreen(screen_id); });
+        username_panel_ = new UsernamePanel(this, [this](int screen_id){ setScreen(screen_id); });
 
         game_selection_panel_ = new wxPanel(this);
         setupGameSelection();
@@ -51,6 +54,7 @@ public:
         c4_panel_ = new C4GameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
 
         waiting_panel_->Hide();
+        username_panel_->Hide();
         game_selection_panel_->Hide();
         ttt_panel_->Hide();
         rps_panel_->Hide();
@@ -62,17 +66,36 @@ public:
         frameSizer->Add(c4_panel_, 1, wxEXPAND);
         frameSizer->Add(waiting_panel_, 1, wxEXPAND);
         frameSizer->Add(game_selection_panel_, 1, wxEXPAND);
+        frameSizer->Add(username_panel_, 1, wxEXPAND);
         SetSizer(frameSizer);
         Layout(); // Forces the layout to update visually
 
+        username_panel_->Show();
+        Layout();
+
         waiting_panel_->Text("waiting for people to join...");
-        waiting_panel_->Show();
 
         initalized_ = false;
 
         // updates waiting panel to show how many seconds we are waiting for
         std::thread([this](){
             auto start = std::chrono::steady_clock::now();
+            while(!username_panel_->getUsernameStatus()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                std::stringstream ss;
+                
+                auto timer = (std::chrono::steady_clock::now() - start);
+                int seconds = std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+    
+                wxTheApp->CallAfter([this](){
+                    Refresh();
+                });
+            }
+            username_panel_->Hide();
+            game_user_->username = username_panel_->GetUsername();
+            waiting_panel_->Show();
+            Layout();
             while(!initalized_){
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
