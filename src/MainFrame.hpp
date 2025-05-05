@@ -43,7 +43,7 @@ private:
     UsernamePanel* username_panel_;
 
 public:
-    MainFrame(): wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
+    MainFrame(): wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(800, 600))
     {
         CreateStatusBar();
 
@@ -359,7 +359,7 @@ private:
         wxGridSizer* gridSizer = new wxGridSizer(1, 2, 5, 5); // 3 rows, 3 columns, 5px padding
 
         wxBitmap rockButtonImage;
-        rockButtonImage.LoadFile(wxT("./resources/rock.png"), wxBITMAP_TYPE_PNG);
+        rockButtonImage.LoadFile(wxT("./resources/RPSlogo.png"), wxBITMAP_TYPE_PNG);
         wxBitmap xButtonImage;
         xButtonImage.LoadFile(wxT("./resources/TTTlogo.png"), wxBITMAP_TYPE_PNG);
         wxBitmap rButtonImage;

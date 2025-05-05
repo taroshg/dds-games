@@ -34,11 +34,18 @@ private:
     std::string player2Name;
     char player1Choice, player2Choice;
 
+    wxColor win_color;
+    wxColor lose_color;
+    wxColor bg_color;
+
 public:
     const uint8_t GAME_ID = 1;
     RPSGameGUI(wxFrame *parent, WaitingPanel *waitingPanel, std::function<void(int)> setScreen, GameUser *game_user)
         : AbstractGamePanel(parent, waitingPanel, setScreen, game_user),
-          player1Choice(0), player2Choice(0)
+          player1Choice(0), player2Choice(0),
+          win_color(wxColour(144, 238, 144)),
+          lose_color(wxColour(255, 102, 102)),
+          bg_color(wxColour(173, 216, 230))
     {
         my_msg_ = new GameMessage();
         my_msg_->game_id(GAME_ID);
@@ -49,7 +56,7 @@ public:
 
         setupGame();
 
-        SetBackgroundColour(wxColour(173, 216, 230)); // light blue
+        SetBackgroundColour(bg_color);
 
         Refresh();
         Update();
@@ -158,15 +165,19 @@ private:
                  (player1Choice == 's' && player2Choice == 'p'))
         {
             // Flash green background for win
-            SetBackgroundColour(wxColour(144, 238, 144)); // light green
+            SetBackgroundColour(win_color); // light green
             wxMessageBox("you win the round!");
             wxMilliSleep(500);                            // short delay
-            SetBackgroundColour(wxColour(173, 216, 230)); // reset to original light blue
+            SetBackgroundColour(bg_color); // reset to original light blue
             player1Wins++;
         }
         else
         {
+            // Flash red background for lose
+            SetBackgroundColour(lose_color);
             wxMessageBox("you lose the round");
+            wxMilliSleep(500);                            // short delay
+            SetBackgroundColour(bg_color); // reset to original light blue
             player2Wins++;
         }
 
