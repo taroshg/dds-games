@@ -9,5 +9,9 @@ struct GameMessage {
     unsigned long ttt; // tic-tac-toe game state
     unsigned long long c4; // connect 4 game state
 
+    octet chess_from; // chess game state from sqr
+    octet chess_to; // chess game state to sqr
+    octet chess_prom; // chess game state promotion
+
     string message;
 };

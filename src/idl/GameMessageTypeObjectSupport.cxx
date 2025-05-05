@@ -285,6 +285,96 @@ void register_GameMessage_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_GameMessage, member_c4);
         }
         {
+            TypeIdentifierPair type_ids_chess_from;
+            ReturnCode_t return_code_chess_from {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_chess_from =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_chess_from);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_chess_from)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "chess_from Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_chess_from = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_chess_from = 0x00000007;
+            bool common_chess_from_ec {false};
+            CommonStructMember common_chess_from {TypeObjectUtils::build_common_struct_member(member_id_chess_from, member_flags_chess_from, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_chess_from, common_chess_from_ec))};
+            if (!common_chess_from_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure chess_from member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_chess_from = "chess_from";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_chess_from;
+            ann_custom_GameMessage.reset();
+            CompleteMemberDetail detail_chess_from = TypeObjectUtils::build_complete_member_detail(name_chess_from, member_ann_builtin_chess_from, ann_custom_GameMessage);
+            CompleteStructMember member_chess_from = TypeObjectUtils::build_complete_struct_member(common_chess_from, detail_chess_from);
+            TypeObjectUtils::add_complete_struct_member(member_seq_GameMessage, member_chess_from);
+        }
+        {
+            TypeIdentifierPair type_ids_chess_to;
+            ReturnCode_t return_code_chess_to {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_chess_to =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_chess_to);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_chess_to)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "chess_to Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_chess_to = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_chess_to = 0x00000008;
+            bool common_chess_to_ec {false};
+            CommonStructMember common_chess_to {TypeObjectUtils::build_common_struct_member(member_id_chess_to, member_flags_chess_to, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_chess_to, common_chess_to_ec))};
+            if (!common_chess_to_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure chess_to member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_chess_to = "chess_to";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_chess_to;
+            ann_custom_GameMessage.reset();
+            CompleteMemberDetail detail_chess_to = TypeObjectUtils::build_complete_member_detail(name_chess_to, member_ann_builtin_chess_to, ann_custom_GameMessage);
+            CompleteStructMember member_chess_to = TypeObjectUtils::build_complete_struct_member(common_chess_to, detail_chess_to);
+            TypeObjectUtils::add_complete_struct_member(member_seq_GameMessage, member_chess_to);
+        }
+        {
+            TypeIdentifierPair type_ids_chess_prom;
+            ReturnCode_t return_code_chess_prom {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_chess_prom =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_chess_prom);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_chess_prom)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "chess_prom Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_chess_prom = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_chess_prom = 0x00000009;
+            bool common_chess_prom_ec {false};
+            CommonStructMember common_chess_prom {TypeObjectUtils::build_common_struct_member(member_id_chess_prom, member_flags_chess_prom, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_chess_prom, common_chess_prom_ec))};
+            if (!common_chess_prom_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure chess_prom member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_chess_prom = "chess_prom";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_chess_prom;
+            ann_custom_GameMessage.reset();
+            CompleteMemberDetail detail_chess_prom = TypeObjectUtils::build_complete_member_detail(name_chess_prom, member_ann_builtin_chess_prom, ann_custom_GameMessage);
+            CompleteStructMember member_chess_prom = TypeObjectUtils::build_complete_struct_member(common_chess_prom, detail_chess_prom);
+            TypeObjectUtils::add_complete_struct_member(member_seq_GameMessage, member_chess_prom);
+        }
+        {
             TypeIdentifierPair type_ids_message;
             ReturnCode_t return_code_message {eprosima::fastdds::dds::RETCODE_OK};
             return_code_message =
@@ -307,7 +397,7 @@ void register_GameMessage_type_identifier(
             }
             StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_message = 0x00000007;
+            MemberId member_id_message = 0x0000000a;
             bool common_message_ec {false};
             CommonStructMember common_message {TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_message, common_message_ec))};
             if (!common_message_ec)

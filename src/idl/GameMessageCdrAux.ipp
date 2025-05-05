@@ -72,6 +72,15 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.c4(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                data.chess_from(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                data.chess_to(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                data.chess_prom(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                 data.message(), current_alignment);
 
 
@@ -99,7 +108,10 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(4) << data.rps()
         << eprosima::fastcdr::MemberId(5) << data.ttt()
         << eprosima::fastcdr::MemberId(6) << data.c4()
-        << eprosima::fastcdr::MemberId(7) << data.message()
+        << eprosima::fastcdr::MemberId(7) << data.chess_from()
+        << eprosima::fastcdr::MemberId(8) << data.chess_to()
+        << eprosima::fastcdr::MemberId(9) << data.chess_prom()
+        << eprosima::fastcdr::MemberId(10) << data.message()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -146,6 +158,18 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 7:
+                                                dcdr >> data.chess_from();
+                                            break;
+
+                                        case 8:
+                                                dcdr >> data.chess_to();
+                                            break;
+
+                                        case 9:
+                                                dcdr >> data.chess_prom();
+                                            break;
+
+                                        case 10:
                                                 dcdr >> data.message();
                                             break;
 
@@ -177,6 +201,12 @@ void serialize_key(
                         scdr << data.ttt();
 
                         scdr << data.c4();
+
+                        scdr << data.chess_from();
+
+                        scdr << data.chess_to();
+
+                        scdr << data.chess_prom();
 
                         scdr << data.message();
 

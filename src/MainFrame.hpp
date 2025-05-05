@@ -10,10 +10,13 @@
 #include <thread>
 
 #include "DDSGameController.hpp"
+
 #include "AbstractGameGUI.hpp"
 #include "TTTGameGUI.hpp"
 #include "RPSGameGUI.hpp"
 #include "C4GameGUI.hpp"
+#include "ChessGameGUI.hpp"
+
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
 #include "UsernamePanel.hpp"
@@ -26,6 +29,8 @@ private:
     AbstractGamePanel* ttt_panel_;
     AbstractGamePanel* rps_panel_;
     AbstractGamePanel* c4_panel_;
+    AbstractGamePanel* chess_panel_;
+
     WaitingPanel* waiting_panel_;
     UsernamePanel* username_panel_;
     wxPanel* game_selection_panel_;
@@ -48,10 +53,10 @@ public:
         setupGameSelection();
 
         game_user_ = new GameUser();
-        
         ttt_panel_ = new TTTGameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
         rps_panel_ = new RPSGameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
         c4_panel_ = new C4GameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
+        chess_panel_ = new ChessGameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
 
         waiting_panel_->Hide();
         username_panel_->Hide();
@@ -59,11 +64,13 @@ public:
         ttt_panel_->Hide();
         rps_panel_->Hide();
         c4_panel_->Hide();
+        chess_panel_->Hide();
 
         frameSizer = new wxBoxSizer(wxVERTICAL);
         frameSizer->Add(ttt_panel_, 1, wxEXPAND);
         frameSizer->Add(rps_panel_, 1, wxEXPAND);
         frameSizer->Add(c4_panel_, 1, wxEXPAND);
+        frameSizer->Add(chess_panel_, 1, wxEXPAND);
         frameSizer->Add(waiting_panel_, 1, wxEXPAND);
         frameSizer->Add(game_selection_panel_, 1, wxEXPAND);
         frameSizer->Add(username_panel_, 1, wxEXPAND);
@@ -141,6 +148,7 @@ public:
         rps_panel_->Hide();
         ttt_panel_->Hide();
         c4_panel_->Hide();
+        chess_panel_->Hide();
 
         // update game_user screen, which broadcasts your current screen to everyone
         game_user_->setScreen(screen_id);
@@ -288,6 +296,48 @@ public:
 
             return;
         }
+        if(screen_id == SCREEN_CHESS){
+            waiting_panel_->Text("waiting for opp..");
+            waiting_panel_->Show();
+            Layout();
+            
+            std::thread([this]() {
+                auto start = std::chrono::steady_clock::now();
+                auto end = start + std::chrono::seconds(OPP_JOIN_WAIT);
+
+                while(game_user_->readOppGameChoice() != SCREEN_CHESS && std::chrono::steady_clock::now() < end){
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    
+                    std::stringstream ss;
+                    
+                    auto timer = (std::chrono::steady_clock::now() - start);
+                    int seconds = OPP_JOIN_WAIT - std::chrono::duration_cast<std::chrono::seconds>(timer).count();
+
+                    ss << "waiting for opp (" << seconds << " seconds)";
+                    waiting_panel_->Text(ss.str());
+
+                    wxTheApp->CallAfter([this](){
+                        Refresh();
+                    });
+                }
+                
+                if (std::chrono::steady_clock::now() < end){
+                    wxTheApp->CallAfter([this](){
+                        waiting_panel_->Hide();
+                        chess_panel_->setOppActive(true);
+                        chess_panel_->Show();
+                        Layout();
+                        if (!game_user_->first_)
+                            chess_panel_->waitingMoveEnter();                     
+                    });
+                }
+                else {
+                    setScreen(0);
+                    SetStatusText("waiting for opp in chess, timed out!");
+                }
+
+            }).detach();
+        }
     }
     
 private:
@@ -300,6 +350,8 @@ private:
         xButtonImage.LoadFile(wxT("./resources/TTTlogo.png"), wxBITMAP_TYPE_PNG);
         wxBitmap rButtonImage;
         rButtonImage.LoadFile(wxT("./resources/red_dot.png"), wxBITMAP_TYPE_PNG);
+        wxBitmap chessButtonImage;
+        chessButtonImage.LoadFile(wxT("./resources/chess/wp.png"), wxBITMAP_TYPE_PNG);
         wxSize buttonTileSize = wxSize(100,100);
     
         wxBitmapButton* RPS = new wxBitmapButton(game_selection_panel_, 201, rockButtonImage, wxDefaultPosition, buttonTileSize);
@@ -308,10 +360,13 @@ private:
         TTT->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
         wxBitmapButton* C4 = new wxBitmapButton(game_selection_panel_, 203, rButtonImage, wxDefaultPosition, buttonTileSize);
         C4->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
+        wxBitmapButton* CHESS = new wxBitmapButton(game_selection_panel_, 204, chessButtonImage, wxDefaultPosition, buttonTileSize);
+        CHESS->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
     
         gridSizer->Add(RPS, 0, wxALIGN_CENTER , 5);
         gridSizer->Add(TTT, 0, wxALIGN_CENTER , 5);
         gridSizer->Add(C4, 0, wxALIGN_CENTER , 5);
+        gridSizer->Add(CHESS, 0, wxALIGN_CENTER , 5);
     
         // Wrap gridSizer inside a box sizer to center it
         wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
