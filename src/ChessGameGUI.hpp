@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/dcbuffer.h>
 
 #include "GameUser.hpp"
 #include "WaitingPanel.hpp"
@@ -112,6 +113,7 @@ public:
     ChessGameGUI(wxFrame* parent, WaitingPanel* waitingPanel, std::function<void(int)> setScreen, GameUser* game_user)
     :AbstractGamePanel(parent, waitingPanel, setScreen, game_user)
     {
+        SetBackgroundStyle(wxBG_STYLE_PAINT); 
         Bind(wxEVT_PAINT, &ChessGameGUI::OnPaint, this);
         Bind(wxEVT_LEFT_DOWN, &ChessGameGUI::OnMouseDown, this);
         Bind(wxEVT_MOTION, &ChessGameGUI::OnMouseMove, this);
@@ -121,7 +123,7 @@ public:
     ~ChessGameGUI() {};
 
     void OnPaint(wxPaintEvent& event) {
-        wxPaintDC dc(this);
+        wxBufferedPaintDC dc(this);
         dc.SetBackground(*wxBLACK_BRUSH); // Set background color
         dc.Clear();
 

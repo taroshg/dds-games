@@ -14,13 +14,14 @@ private:
     bool entered_username_;
 public:
     UsernamePanel(wxFrame* parent, std::function<void(int)> setScreen): wxPanel(parent, wxID_ANY) {
-        this->SetBackgroundColour(wxColour(255, 255, 255, 150));
+        this->SetBackgroundColour(wxColour(0, 0, 0, 150));
+        this->SetForegroundColour(wxColour(255, 255, 255));
         wxBoxSizer* waiting_sizer = new wxBoxSizer(wxVERTICAL);
         username_text_ = new wxStaticText(this, wxID_ANY, "Enter your username");
         username_field_ = new wxTextCtrl(this, wxID_ANY);
         entered_username_ = false;
 
-        username_text_->SetForegroundColour(*wxBLACK);
+        username_text_->SetForegroundColour(*wxWHITE);
         waiting_sizer->AddStretchSpacer();
         waiting_sizer->Add(username_text_, 0, wxALIGN_CENTER | wxALL, 5);
         waiting_sizer->Add(username_field_, 0, wxALIGN_CENTER | wxALL, 5);

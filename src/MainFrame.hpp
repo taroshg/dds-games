@@ -87,7 +87,7 @@ public:
         std::thread([this](){
             while(!username_set_){
                 username_set_ = username_panel_->getUsernameStatus();
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             }
 
             // after username is set, hide username panel and show waiting panel if needed
@@ -122,7 +122,7 @@ public:
         std::thread([this]() {
             // wait for username to be set before showing game selection panel
             while(!username_set_) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                std::this_thread::sleep_for(std::chrono::seconds(1));
             }
 
             initalized_ = game_user_->init();
@@ -344,6 +344,18 @@ public:
     
 private:
     void setupGameSelection(){
+        game_selection_panel_->SetBackgroundColour(wxColour(173, 216, 230)); // light blue
+
+        // Main title
+        wxStaticText *titleText = new wxStaticText(game_selection_panel_, wxID_ANY, "Welcome to the Game Lobby");
+        titleText->SetFont(wxFontInfo(24).Bold().FaceName("Georgia"));
+        titleText->SetForegroundColour(*wxBLACK);
+
+        // Subtitle
+        wxStaticText *subtitleText = new wxStaticText(game_selection_panel_, wxID_ANY, "Select the game you would like to play");
+        subtitleText->SetFont(wxFontInfo(14).Italic().FaceName("Segoe UI"));
+        subtitleText->SetForegroundColour(wxColour(80, 80, 80)); // gray
+
         wxGridSizer* gridSizer = new wxGridSizer(1, 2, 5, 5); // 3 rows, 3 columns, 5px padding
 
         wxBitmap rockButtonImage;
@@ -354,7 +366,7 @@ private:
         rButtonImage.LoadFile(wxT("./resources/red_dot.png"), wxBITMAP_TYPE_PNG);
         wxBitmap chessButtonImage;
         chessButtonImage.LoadFile(wxT("./resources/chess/wp.png"), wxBITMAP_TYPE_PNG);
-        wxSize buttonTileSize = wxSize(100,100);
+        wxSize buttonTileSize = wxSize(128,128);
     
         wxBitmapButton* RPS = new wxBitmapButton(game_selection_panel_, 201, rockButtonImage, wxDefaultPosition, buttonTileSize);
         RPS->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
@@ -364,22 +376,39 @@ private:
         C4->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
         wxBitmapButton* CHESS = new wxBitmapButton(game_selection_panel_, 204, chessButtonImage, wxDefaultPosition, buttonTileSize);
         CHESS->Bind(wxEVT_BUTTON, &MainFrame::selectionButtonClick, this);
-    
-        gridSizer->Add(RPS, 0, wxALIGN_CENTER , 5);
-        gridSizer->Add(TTT, 0, wxALIGN_CENTER , 5);
-        gridSizer->Add(C4, 0, wxALIGN_CENTER , 5);
-        gridSizer->Add(CHESS, 0, wxALIGN_CENTER , 5);
-    
-        // Wrap gridSizer inside a box sizer to center it
-        wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    
-        wxStaticText* infoText = new wxStaticText(game_selection_panel_, wxID_ANY, "Choose a game");
-        infoText->SetFont(wxFontInfo(12).Bold());
-        mainSizer->Add(infoText, 0, wxALIGN_CENTER | wxTOP, 20); // Centers grid
-    
-        mainSizer->AddStretchSpacer(); // Pushes content down
-        mainSizer->Add(gridSizer, 0, wxALIGN_CENTER | wxALL, 20); // Centers grid
-        mainSizer->AddStretchSpacer(); // Pushes content up
+
+        // LABEL MAKER
+        auto makeLabeledButton = [&](wxBitmapButton *btn, const wxString &label) -> wxBoxSizer *
+        {
+            wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+            wxStaticText *text = new wxStaticText(game_selection_panel_, wxID_ANY, label);
+            text->SetFont(wxFontInfo(10).Bold());
+            text->SetForegroundColour(*wxBLACK);
+            text->Wrap(125);
+            sizer->Add(btn, 0, wxALIGN_CENTER);
+            sizer->AddSpacer(5);
+            sizer->Add(text, 0, wxALIGN_CENTER);
+            return sizer;
+        };
+
+        // RPS and TTT labels
+        wxBoxSizer *topRowSizer = new wxBoxSizer(wxHORIZONTAL);
+        topRowSizer->Add(makeLabeledButton(RPS, "Rock Paper Scissors"), 0, wxALIGN_CENTER | wxRIGHT, 40);
+        topRowSizer->Add(makeLabeledButton(TTT, "Tic Tac Toe"), 0, wxALIGN_CENTER);
+
+        // Connect four label
+        wxBoxSizer *bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
+        bottomRowSizer->Add(makeLabeledButton(C4, "Connect Four"), 0, wxALIGN_CENTER | wxRIGHT, 40);
+        bottomRowSizer->Add(makeLabeledButton(CHESS, "Chess"), 0, wxALIGN_CENTER);
+
+        // Lay out for the main screen
+        wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+        mainSizer->AddSpacer(20);
+        mainSizer->Add(titleText, 0, wxALIGN_CENTER | wxBOTTOM, 5);
+        mainSizer->Add(subtitleText, 0, wxALIGN_CENTER | wxBOTTOM, 20);
+        mainSizer->Add(topRowSizer, 0, wxALIGN_CENTER | wxBOTTOM, 30);
+        mainSizer->Add(bottomRowSizer, 0, wxALIGN_CENTER);
+        mainSizer->AddStretchSpacer();
     
         game_selection_panel_->SetSizer(mainSizer);
         game_selection_panel_->Layout();
