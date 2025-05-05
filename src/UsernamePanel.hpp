@@ -20,8 +20,6 @@ public:
         username_field_ = new wxTextCtrl(this, wxID_ANY);
         entered_username_ = false;
 
-
-
         username_text_->SetForegroundColour(*wxBLACK);
         waiting_sizer->AddStretchSpacer();
         waiting_sizer->Add(username_text_, 0, wxALIGN_CENTER | wxALL, 5);

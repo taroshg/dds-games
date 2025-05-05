@@ -32,7 +32,6 @@ private:
     AbstractGamePanel* chess_panel_;
 
     WaitingPanel* waiting_panel_;
-    UsernamePanel* username_panel_;
     wxPanel* game_selection_panel_;
 
     wxBoxSizer* frameSizer;
@@ -40,6 +39,8 @@ private:
     GameUser* game_user_;
 
     bool initalized_;
+    bool username_set_;
+    UsernamePanel* username_panel_;
 
 public:
     MainFrame(): wxFrame(nullptr, wxID_ANY, "DDS Game Suite Early Build", wxDefaultPosition, wxSize(600, 450))
@@ -59,7 +60,6 @@ public:
         chess_panel_ = new ChessGameGUI(this, waiting_panel_, [this](int screen_id){ setScreen(screen_id); }, game_user_);
 
         waiting_panel_->Hide();
-        username_panel_->Hide();
         game_selection_panel_->Hide();
         ttt_panel_->Hide();
         rps_panel_->Hide();
@@ -77,32 +77,30 @@ public:
         SetSizer(frameSizer);
         Layout(); // Forces the layout to update visually
 
+        // shows the username panel first thing!
         username_panel_->Show();
         Layout();
 
-        waiting_panel_->Text("waiting for people to join...");
-
         initalized_ = false;
-
+        username_set_ = false;
         // updates waiting panel to show how many seconds we are waiting for
         std::thread([this](){
-            auto start = std::chrono::steady_clock::now();
-            while(!username_panel_->getUsernameStatus()) {
+            while(!username_set_){
+                username_set_ = username_panel_->getUsernameStatus();
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-                std::stringstream ss;
-                
-                auto timer = (std::chrono::steady_clock::now() - start);
-                int seconds = std::chrono::duration_cast<std::chrono::seconds>(timer).count();
-    
-                wxTheApp->CallAfter([this](){
-                    Refresh();
-                });
             }
-            username_panel_->Hide();
-            game_user_->username = username_panel_->GetUsername();
-            waiting_panel_->Show();
-            Layout();
+
+            // after username is set, hide username panel and show waiting panel if needed
+            wxTheApp->CallAfter([this](){
+                username_panel_->Hide();
+                if (!initalized_){
+                    waiting_panel_->Text("waiting for people to join...");
+                    waiting_panel_->Show();
+                }
+                Layout();
+            });
+
+            auto start = std::chrono::steady_clock::now();
             while(!initalized_){
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -120,13 +118,17 @@ public:
             }
         }).detach();
 
-        // starts a thread for the initialization of game_user
+        // starts a thread for the initialization of game_user, to show game selection panel
         std::thread([this]() {
+            // wait for username to be set before showing game selection panel
+            while(!username_set_) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+
             initalized_ = game_user_->init();
 
             // Return to GUI thread to continue
             wxTheApp->CallAfter([this]() {
-                // if you are first to join show game selection panel
                 waiting_panel_->Hide();
                 waiting_panel_->Text("waiting for opp...");
                 game_selection_panel_->Show();
