@@ -70,6 +70,13 @@ private:
         my_msg_ = new GameMessage();
         my_msg_->game_id(GAME_ID);
         opp_msg_ = new GameMessage();
+        from_sqr = chess::Square::NO_SQ;
+        to_sqr = chess::Square::NO_SQ;
+        pieces.clear();
+
+        if (game_user_->turn_){
+            setInteractive(true);
+        }
     }
 
     const chess::PieceGenType charToPieceGen(char c) {

@@ -58,6 +58,11 @@ public:
 
     void setOppActive(bool active){
         is_opp_active_ = active;
+        if (!active){
+            setFrameStatusText("opponent left the game");
+            setupGame();
+            parentFrame->Layout();
+        }
     }
 
     void setInteractive(bool enable){
@@ -100,6 +105,10 @@ public:
         my_msg_ = new GameMessage();
         opp_msg_ = new GameMessage();
 
+        // reset the game and reset the turn
+        setupGame();
+        setFrameStatusText("select a game...");
+        game_user_->turn_ = game_user_->first_;
         // will broadcast you have left the game to everyone
         setScreen(SCREEN_GAME_SELECTION);
     }
