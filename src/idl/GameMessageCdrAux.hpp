@@ -24,7 +24,7 @@
 
 #include "GameMessage.hpp"
 
-constexpr uint32_t GameMessage_max_cdr_typesize {812UL};
+constexpr uint32_t GameMessage_max_cdr_typesize {816UL};
 constexpr uint32_t GameMessage_max_key_cdr_typesize {0UL};
 
 

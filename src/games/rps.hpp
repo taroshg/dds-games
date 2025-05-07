@@ -1,10 +1,10 @@
-#include "../GameWrapper.hpp"
+#include "GameWrapper.hpp"
 #include <iostream>
 
 class RPS : public GameWrapper {
 public:
     RPS(): GameWrapper() {};
-    void get_user_move(GameMessage* game_msg, GameMessage* opp_game_msg) override {
+    void get_user_move_CLI(GameMessage* game_msg, GameMessage* opp_game_msg) override {
         char move;
         do {
             std::cout << "'r' for rock\n";
@@ -22,8 +22,8 @@ public:
     }
 
     int get_winner(GameMessage* game_msg, GameMessage* opp_game_msg) override {
-        long move = game_msg->rps();
-        long opp_move = opp_game_msg->rps();
+        uint8_t move = game_msg->rps();
+        uint8_t opp_move = opp_game_msg->rps();
 
         if (move == opp_move) return 0;
 

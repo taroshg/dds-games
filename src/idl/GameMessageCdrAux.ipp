@@ -60,24 +60,27 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.uid(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                data.oid(), current_alignment);
+                data.username(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
-                data.ngames(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
-                data.wins(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                 data.rps(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                 data.ttt(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                 data.c4(), current_alignment);
 
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                data.chess_from(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                data.chess_to(), current_alignment);
+
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                data.chess_prom(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                 data.message(), current_alignment);
 
 
@@ -101,13 +104,14 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.index()
         << eprosima::fastcdr::MemberId(1) << data.game_id()
         << eprosima::fastcdr::MemberId(2) << data.uid()
-        << eprosima::fastcdr::MemberId(3) << data.oid()
-        << eprosima::fastcdr::MemberId(4) << data.ngames()
-        << eprosima::fastcdr::MemberId(5) << data.wins()
-        << eprosima::fastcdr::MemberId(6) << data.rps()
-        << eprosima::fastcdr::MemberId(7) << data.ttt()
-        << eprosima::fastcdr::MemberId(8) << data.c4()
-        << eprosima::fastcdr::MemberId(9) << data.message()
+        << eprosima::fastcdr::MemberId(3) << data.username()
+        << eprosima::fastcdr::MemberId(4) << data.rps()
+        << eprosima::fastcdr::MemberId(5) << data.ttt()
+        << eprosima::fastcdr::MemberId(6) << data.c4()
+        << eprosima::fastcdr::MemberId(7) << data.chess_from()
+        << eprosima::fastcdr::MemberId(8) << data.chess_to()
+        << eprosima::fastcdr::MemberId(9) << data.chess_prom()
+        << eprosima::fastcdr::MemberId(10) << data.message()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -138,30 +142,34 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 3:
-                                                dcdr >> data.oid();
+                                                dcdr >> data.username();
                                             break;
 
                                         case 4:
-                                                dcdr >> data.ngames();
-                                            break;
-
-                                        case 5:
-                                                dcdr >> data.wins();
-                                            break;
-
-                                        case 6:
                                                 dcdr >> data.rps();
                                             break;
 
-                                        case 7:
+                                        case 5:
                                                 dcdr >> data.ttt();
                                             break;
 
-                                        case 8:
+                                        case 6:
                                                 dcdr >> data.c4();
                                             break;
 
+                                        case 7:
+                                                dcdr >> data.chess_from();
+                                            break;
+
+                                        case 8:
+                                                dcdr >> data.chess_to();
+                                            break;
+
                                         case 9:
+                                                dcdr >> data.chess_prom();
+                                            break;
+
+                                        case 10:
                                                 dcdr >> data.message();
                                             break;
 
@@ -186,17 +194,19 @@ void serialize_key(
 
                         scdr << data.uid();
 
-                        scdr << data.oid();
-
-                        scdr << data.ngames();
-
-                        scdr << data.wins();
+                        scdr << data.username();
 
                         scdr << data.rps();
 
                         scdr << data.ttt();
 
                         scdr << data.c4();
+
+                        scdr << data.chess_from();
+
+                        scdr << data.chess_to();
+
+                        scdr << data.chess_prom();
 
                         scdr << data.message();
 

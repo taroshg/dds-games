@@ -1,7 +1,7 @@
 #ifndef GAME_WRAPPER_HEADER
 #define GAME_WRAPPER_HEADER
 
-#include "../GameMessagePubSubTypes.hpp"
+#include "../idl/GameMessagePubSubTypes.hpp"
 
 class GameWrapper {
 protected:
@@ -17,7 +17,7 @@ public:
     opp_wins_(0) {}
 
     // update game_msg with state after your move
-    virtual void get_user_move(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
+    virtual void get_user_move_CLI(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
     virtual int get_winner(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
     virtual bool is_end(GameMessage* game_msg, GameMessage* opp_game_msg) = 0;
 

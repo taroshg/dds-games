@@ -1,4 +1,4 @@
-#include "../GameWrapper.hpp"
+#include "GameWrapper.hpp"
 #include <iostream>
 #include <bitset>
 
@@ -13,17 +13,17 @@ private:
                                 273, // right-left diag.
                                 84}; // left-right diag.
 
-    unsigned long my_board;
-    unsigned long opp_board;
+    uint16_t my_board;
+    uint16_t opp_board;
 public:
     TTT(): GameWrapper(), my_board(0), opp_board(0) {};
 
     ~TTT(){}
 
-    void get_user_move(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
+    void get_user_move_CLI(GameMessage* my_game_msg, GameMessage* opp_game_msg) override {
         int move; // pos of square marked
-        unsigned long my_ttt = my_game_msg->ttt();
-        unsigned long opp_ttt = opp_game_msg->ttt();
+        uint16_t my_ttt = my_game_msg->ttt();
+        uint16_t opp_ttt = opp_game_msg->ttt();
 
         // print board here
         char mychar = first_ ? 'x' : 'o'; // i'm x if i'm first to move
@@ -94,19 +94,19 @@ public:
         return out.str();
     }
 
-    unsigned long occupied(){
+    uint16_t occupied(){
         return my_board | opp_board;
     }
 
-    unsigned long myState(){
+    uint16_t myState(){
         return my_board;
     }
 
-    unsigned long oppState(){
+    uint16_t oppState(){
         return opp_board;
     }
 
-    void setOppState(unsigned long opp_state){
+    void setOppState(uint16_t opp_state){
         opp_board = opp_state;
     }
 

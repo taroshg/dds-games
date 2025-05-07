@@ -86,17 +86,19 @@ public:
 
                     m_uid = x.m_uid;
 
-                    m_oid = x.m_oid;
-
-                    m_ngames = x.m_ngames;
-
-                    m_wins = x.m_wins;
+                    m_username = x.m_username;
 
                     m_rps = x.m_rps;
 
                     m_ttt = x.m_ttt;
 
                     m_c4 = x.m_c4;
+
+                    m_chess_from = x.m_chess_from;
+
+                    m_chess_to = x.m_chess_to;
+
+                    m_chess_prom = x.m_chess_prom;
 
                     m_message = x.m_message;
 
@@ -112,12 +114,13 @@ public:
         m_index = x.m_index;
         m_game_id = x.m_game_id;
         m_uid = std::move(x.m_uid);
-        m_oid = std::move(x.m_oid);
-        m_ngames = x.m_ngames;
-        m_wins = x.m_wins;
+        m_username = std::move(x.m_username);
         m_rps = x.m_rps;
         m_ttt = x.m_ttt;
         m_c4 = x.m_c4;
+        m_chess_from = x.m_chess_from;
+        m_chess_to = x.m_chess_to;
+        m_chess_prom = x.m_chess_prom;
         m_message = std::move(x.m_message);
     }
 
@@ -135,17 +138,19 @@ public:
 
                     m_uid = x.m_uid;
 
-                    m_oid = x.m_oid;
-
-                    m_ngames = x.m_ngames;
-
-                    m_wins = x.m_wins;
+                    m_username = x.m_username;
 
                     m_rps = x.m_rps;
 
                     m_ttt = x.m_ttt;
 
                     m_c4 = x.m_c4;
+
+                    m_chess_from = x.m_chess_from;
+
+                    m_chess_to = x.m_chess_to;
+
+                    m_chess_prom = x.m_chess_prom;
 
                     m_message = x.m_message;
 
@@ -163,12 +168,13 @@ public:
         m_index = x.m_index;
         m_game_id = x.m_game_id;
         m_uid = std::move(x.m_uid);
-        m_oid = std::move(x.m_oid);
-        m_ngames = x.m_ngames;
-        m_wins = x.m_wins;
+        m_username = std::move(x.m_username);
         m_rps = x.m_rps;
         m_ttt = x.m_ttt;
         m_c4 = x.m_c4;
+        m_chess_from = x.m_chess_from;
+        m_chess_to = x.m_chess_to;
+        m_chess_prom = x.m_chess_prom;
         m_message = std::move(x.m_message);
         return *this;
     }
@@ -183,12 +189,13 @@ public:
         return (m_index == x.m_index &&
            m_game_id == x.m_game_id &&
            m_uid == x.m_uid &&
-           m_oid == x.m_oid &&
-           m_ngames == x.m_ngames &&
-           m_wins == x.m_wins &&
+           m_username == x.m_username &&
            m_rps == x.m_rps &&
            m_ttt == x.m_ttt &&
            m_c4 == x.m_c4 &&
+           m_chess_from == x.m_chess_from &&
+           m_chess_to == x.m_chess_to &&
+           m_chess_prom == x.m_chess_prom &&
            m_message == x.m_message);
     }
 
@@ -300,99 +307,41 @@ public:
 
 
     /*!
-     * @brief This function copies the value in member oid
-     * @param _oid New value to be copied in member oid
+     * @brief This function copies the value in member username
+     * @param _username New value to be copied in member username
      */
-    eProsima_user_DllExport void oid(
-            const std::string& _oid)
+    eProsima_user_DllExport void username(
+            const std::string& _username)
     {
-        m_oid = _oid;
+        m_username = _username;
     }
 
     /*!
-     * @brief This function moves the value in member oid
-     * @param _oid New value to be moved in member oid
+     * @brief This function moves the value in member username
+     * @param _username New value to be moved in member username
      */
-    eProsima_user_DllExport void oid(
-            std::string&& _oid)
+    eProsima_user_DllExport void username(
+            std::string&& _username)
     {
-        m_oid = std::move(_oid);
+        m_username = std::move(_username);
     }
 
     /*!
-     * @brief This function returns a constant reference to member oid
-     * @return Constant reference to member oid
+     * @brief This function returns a constant reference to member username
+     * @return Constant reference to member username
      */
-    eProsima_user_DllExport const std::string& oid() const
+    eProsima_user_DllExport const std::string& username() const
     {
-        return m_oid;
+        return m_username;
     }
 
     /*!
-     * @brief This function returns a reference to member oid
-     * @return Reference to member oid
+     * @brief This function returns a reference to member username
+     * @return Reference to member username
      */
-    eProsima_user_DllExport std::string& oid()
+    eProsima_user_DllExport std::string& username()
     {
-        return m_oid;
-    }
-
-
-    /*!
-     * @brief This function sets a value in member ngames
-     * @param _ngames New value for member ngames
-     */
-    eProsima_user_DllExport void ngames(
-            uint32_t _ngames)
-    {
-        m_ngames = _ngames;
-    }
-
-    /*!
-     * @brief This function returns the value of member ngames
-     * @return Value of member ngames
-     */
-    eProsima_user_DllExport uint32_t ngames() const
-    {
-        return m_ngames;
-    }
-
-    /*!
-     * @brief This function returns a reference to member ngames
-     * @return Reference to member ngames
-     */
-    eProsima_user_DllExport uint32_t& ngames()
-    {
-        return m_ngames;
-    }
-
-
-    /*!
-     * @brief This function sets a value in member wins
-     * @param _wins New value for member wins
-     */
-    eProsima_user_DllExport void wins(
-            uint32_t _wins)
-    {
-        m_wins = _wins;
-    }
-
-    /*!
-     * @brief This function returns the value of member wins
-     * @return Value of member wins
-     */
-    eProsima_user_DllExport uint32_t wins() const
-    {
-        return m_wins;
-    }
-
-    /*!
-     * @brief This function returns a reference to member wins
-     * @return Reference to member wins
-     */
-    eProsima_user_DllExport uint32_t& wins()
-    {
-        return m_wins;
+        return m_username;
     }
 
 
@@ -401,7 +350,7 @@ public:
      * @param _rps New value for member rps
      */
     eProsima_user_DllExport void rps(
-            uint32_t _rps)
+            uint8_t _rps)
     {
         m_rps = _rps;
     }
@@ -410,7 +359,7 @@ public:
      * @brief This function returns the value of member rps
      * @return Value of member rps
      */
-    eProsima_user_DllExport uint32_t rps() const
+    eProsima_user_DllExport uint8_t rps() const
     {
         return m_rps;
     }
@@ -419,7 +368,7 @@ public:
      * @brief This function returns a reference to member rps
      * @return Reference to member rps
      */
-    eProsima_user_DllExport uint32_t& rps()
+    eProsima_user_DllExport uint8_t& rps()
     {
         return m_rps;
     }
@@ -459,7 +408,7 @@ public:
      * @param _c4 New value for member c4
      */
     eProsima_user_DllExport void c4(
-            uint32_t _c4)
+            uint64_t _c4)
     {
         m_c4 = _c4;
     }
@@ -468,7 +417,7 @@ public:
      * @brief This function returns the value of member c4
      * @return Value of member c4
      */
-    eProsima_user_DllExport uint32_t c4() const
+    eProsima_user_DllExport uint64_t c4() const
     {
         return m_c4;
     }
@@ -477,9 +426,96 @@ public:
      * @brief This function returns a reference to member c4
      * @return Reference to member c4
      */
-    eProsima_user_DllExport uint32_t& c4()
+    eProsima_user_DllExport uint64_t& c4()
     {
         return m_c4;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member chess_from
+     * @param _chess_from New value for member chess_from
+     */
+    eProsima_user_DllExport void chess_from(
+            uint8_t _chess_from)
+    {
+        m_chess_from = _chess_from;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_from
+     * @return Value of member chess_from
+     */
+    eProsima_user_DllExport uint8_t chess_from() const
+    {
+        return m_chess_from;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_from
+     * @return Reference to member chess_from
+     */
+    eProsima_user_DllExport uint8_t& chess_from()
+    {
+        return m_chess_from;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member chess_to
+     * @param _chess_to New value for member chess_to
+     */
+    eProsima_user_DllExport void chess_to(
+            uint8_t _chess_to)
+    {
+        m_chess_to = _chess_to;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_to
+     * @return Value of member chess_to
+     */
+    eProsima_user_DllExport uint8_t chess_to() const
+    {
+        return m_chess_to;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_to
+     * @return Reference to member chess_to
+     */
+    eProsima_user_DllExport uint8_t& chess_to()
+    {
+        return m_chess_to;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member chess_prom
+     * @param _chess_prom New value for member chess_prom
+     */
+    eProsima_user_DllExport void chess_prom(
+            uint8_t _chess_prom)
+    {
+        m_chess_prom = _chess_prom;
+    }
+
+    /*!
+     * @brief This function returns the value of member chess_prom
+     * @return Value of member chess_prom
+     */
+    eProsima_user_DllExport uint8_t chess_prom() const
+    {
+        return m_chess_prom;
+    }
+
+    /*!
+     * @brief This function returns a reference to member chess_prom
+     * @return Reference to member chess_prom
+     */
+    eProsima_user_DllExport uint8_t& chess_prom()
+    {
+        return m_chess_prom;
     }
 
 
@@ -528,12 +564,13 @@ private:
     uint32_t m_index{0};
     uint8_t m_game_id{0};
     std::string m_uid;
-    std::string m_oid;
-    uint32_t m_ngames{0};
-    uint32_t m_wins{0};
-    uint32_t m_rps{0};
+    std::string m_username;
+    uint8_t m_rps{0};
     uint32_t m_ttt{0};
-    uint32_t m_c4{0};
+    uint64_t m_c4{0};
+    uint8_t m_chess_from{0};
+    uint8_t m_chess_to{0};
+    uint8_t m_chess_prom{0};
     std::string m_message;
 
 };
